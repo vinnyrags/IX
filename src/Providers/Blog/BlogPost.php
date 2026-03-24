@@ -29,6 +29,27 @@ class BlogPost extends Post
     }
 
     /**
+     * Get the post's tags.
+     *
+     * @return \Timber\Term[]
+     */
+    public function tags(): array
+    {
+        return $this->terms(['taxonomy' => 'post_tag']);
+    }
+
+    /**
+     * Get all tag slugs as a space-separated string.
+     */
+    public function tagSlugs(): string
+    {
+        return implode(' ', array_map(
+            fn ($term) => $term->slug,
+            $this->tags(),
+        ));
+    }
+
+    /**
      * Estimate reading time in minutes.
      */
     public function readingTime(): int
