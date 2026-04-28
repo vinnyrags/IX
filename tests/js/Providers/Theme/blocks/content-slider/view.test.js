@@ -83,13 +83,14 @@ describe('initContentSlider', () => {
         expect(mountMock).toHaveBeenCalled();
     });
 
-    it('skips initialization for fewer than 2 slides', () => {
-        createContentSlider(1);
+    it('skips Splide initialization for fewer than 2 slides but marks the container is-initialized so visibility lifts', () => {
+        const carousel = createContentSlider(1);
 
         initContentSlider();
 
         expect(Splide).not.toHaveBeenCalled();
         expect(mountMock).not.toHaveBeenCalled();
+        expect(carousel.classList.contains('is-initialized')).toBe(true);
     });
 
     it('initializes multiple carousels independently', () => {

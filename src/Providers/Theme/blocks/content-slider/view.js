@@ -33,7 +33,15 @@ export function initContentSlider() {
     carousels.forEach((carousel) => {
         const slides = carousel.querySelectorAll('.splide__slide');
 
-        if (slides.length < 2) return;
+        if (slides.length < 2) {
+            // Splide's stylesheet sets visibility:hidden on .splide and only
+            // lifts it when .is-initialized is present. We skip Splide for
+            // single-slide carousels (no carousel chrome makes sense for 1
+            // slide), so add the class manually — the slide renders as static
+            // content but stays visible.
+            carousel.classList.add('is-initialized');
+            return;
+        }
 
         new Splide(carousel, SPLIDE_CONFIG).mount();
     });
