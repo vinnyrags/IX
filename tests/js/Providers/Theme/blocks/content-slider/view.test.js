@@ -8,15 +8,15 @@ vi.mock('@splidejs/splide', () => {
 });
 
 import { default as Splide, __mount as mountMock } from '@splidejs/splide';
-import { SPLIDE_CONFIG, initTestimonials } from '../../../../../../src/Providers/Theme/blocks/testimonials/view.js';
+import { SPLIDE_CONFIG, initContentSlider } from '../../../../../../src/Providers/Theme/blocks/content-slider/view.js';
 
 /**
- * Build a testimonials carousel with N slides
+ * Build a content-slider carousel with N slides
  */
-function createTestimonials(count = 3) {
+function createContentSlider(count = 3) {
     const carousel = document.createElement('div');
-    carousel.classList.add('testimonials', 'splide');
-    carousel.setAttribute('aria-label', 'Testimonials');
+    carousel.classList.add('content-slider', 'splide');
+    carousel.setAttribute('aria-label', 'Content slider');
 
     const track = document.createElement('div');
     track.classList.add('splide__track');
@@ -30,7 +30,7 @@ function createTestimonials(count = 3) {
 
         const quote = document.createElement('blockquote');
         quote.classList.add('wp-block-quote');
-        quote.innerHTML = `<p>Testimonial ${i + 1}</p><cite>Author ${i + 1}</cite>`;
+        quote.innerHTML = `<p>Slide ${i + 1}</p><cite>Author ${i + 1}</cite>`;
 
         slide.appendChild(quote);
         list.appendChild(slide);
@@ -66,46 +66,46 @@ describe('SPLIDE_CONFIG', () => {
     });
 
     it('has accessible i18n labels', () => {
-        expect(SPLIDE_CONFIG.i18n.prev).toBe('Previous testimonial');
-        expect(SPLIDE_CONFIG.i18n.next).toBe('Next testimonial');
-        expect(SPLIDE_CONFIG.i18n.slideX).toBe('Go to testimonial %s');
+        expect(SPLIDE_CONFIG.i18n.prev).toBe('Previous slide');
+        expect(SPLIDE_CONFIG.i18n.next).toBe('Next slide');
+        expect(SPLIDE_CONFIG.i18n.slideX).toBe('Go to slide %s');
         expect(SPLIDE_CONFIG.i18n.pageX).toBe('Go to page %s');
     });
 });
 
-describe('initTestimonials', () => {
+describe('initContentSlider', () => {
     it('initializes Splide on carousel with 2+ slides', () => {
-        const carousel = createTestimonials(3);
+        const carousel = createContentSlider(3);
 
-        initTestimonials();
+        initContentSlider();
 
         expect(Splide).toHaveBeenCalledWith(carousel, SPLIDE_CONFIG);
         expect(mountMock).toHaveBeenCalled();
     });
 
     it('skips initialization for fewer than 2 slides', () => {
-        createTestimonials(1);
+        createContentSlider(1);
 
-        initTestimonials();
+        initContentSlider();
 
         expect(Splide).not.toHaveBeenCalled();
         expect(mountMock).not.toHaveBeenCalled();
     });
 
     it('initializes multiple carousels independently', () => {
-        createTestimonials(3);
-        createTestimonials(2);
+        createContentSlider(3);
+        createContentSlider(2);
 
-        initTestimonials();
+        initContentSlider();
 
         expect(Splide).toHaveBeenCalledTimes(2);
         expect(mountMock).toHaveBeenCalledTimes(2);
     });
 
     it('initializes carousel with exactly 2 slides', () => {
-        createTestimonials(2);
+        createContentSlider(2);
 
-        initTestimonials();
+        initContentSlider();
 
         expect(Splide).toHaveBeenCalledTimes(1);
         expect(mountMock).toHaveBeenCalledTimes(1);

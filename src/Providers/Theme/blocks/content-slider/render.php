@@ -1,6 +1,6 @@
 <?php
 /**
- * Server-side rendering for the Testimonials block.
+ * Server-side rendering for the Content Slider block.
  */
 
 use Timber\Timber;
@@ -20,5 +20,5 @@ $context['inner_blocks'] = $rendered_inner_blocks;
 $wrapper_attributes = get_block_wrapper_attributes();
 
 echo '<div ' . $wrapper_attributes . '>';
-Timber::render(__DIR__ . '/testimonials.twig', $context);
+Timber::render(__DIR__ . '/content-slider.twig', $context);
 echo '</div>';

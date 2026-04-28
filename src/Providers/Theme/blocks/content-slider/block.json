@@ -1,11 +1,11 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
   "apiVersion": 3,
-  "name": "ix/testimonials",
-  "title": "Testimonials",
+  "name": "ix/content-slider",
+  "title": "Content Slider",
   "category": "design",
-  "icon": "format-quote",
-  "description": "A carousel of testimonials using quote blocks.",
+  "icon": "slides",
+  "description": "A carousel for any sequential content — quotes, pullquotes, images, anything.",
   "keywords": ["testimonials", "quotes", "carousel", "slider"],
   "supports": {
     "html": false,
@@ -16,6 +16,6 @@
     }
   },
   "textdomain": "ix",
-  "viewScript": "file:../../../../../dist/js/testimonials-view.js",
+  "viewScript": "file:../../../../../dist/js/content-slider-view.js",
   "render": "file:./render.php"
 }

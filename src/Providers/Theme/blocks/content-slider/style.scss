@@ -2,21 +2,21 @@
 @use '@splidejs/splide/dist/css/splide-core.min';
 
 // ==========================================================================
-// Testimonials Carousel
+// Content Slider
 // ==========================================================================
 // All visual properties use CSS custom properties so child themes can
 // override colors, sizing, and spacing without touching this file.
 
-.wp-block-ix-testimonials {
-    --testimonials-arrow-size: 3.125rem;
-    --testimonials-arrow-bg: currentColor;
-    --testimonials-arrow-color: var(--wp--preset--color--base);
-    --testimonials-arrow-hover-bg: var(--testimonials-arrow-bg);
-    --testimonials-arrow-hover-color: var(--testimonials-arrow-color);
-    --testimonials-accent: currentColor;
+.wp-block-ix-content-slider {
+    --content-slider-arrow-size: 3.125rem;
+    --content-slider-arrow-bg: currentColor;
+    --content-slider-arrow-color: var(--wp--preset--color--base);
+    --content-slider-arrow-hover-bg: var(--content-slider-arrow-bg);
+    --content-slider-arrow-hover-color: var(--content-slider-arrow-color);
+    --content-slider-accent: currentColor;
 }
 
-.testimonials {
+.content-slider {
     display: flex;
     flex-direction: column;
     margin-inline: auto;
@@ -60,9 +60,9 @@
         &--next {
             transform: none;
         }
-        background: var(--testimonials-arrow-bg);
-        width: var(--testimonials-arrow-size);
-        height: var(--testimonials-arrow-size);
+        background: var(--content-slider-arrow-bg);
+        width: var(--content-slider-arrow-size);
+        height: var(--content-slider-arrow-size);
         border: none;
         border-radius: 50%;
         opacity: 1;
@@ -70,22 +70,22 @@
         transition: background-color 0.25s ease-in-out, color 0.25s ease-in-out;
 
         svg {
-            fill: var(--testimonials-arrow-color);
+            fill: var(--content-slider-arrow-color);
             width: 1rem;
             height: 1rem;
             transition: fill 0.25s ease-in-out;
         }
 
         &:hover {
-            background: var(--testimonials-arrow-hover-bg);
+            background: var(--content-slider-arrow-hover-bg);
 
             svg {
-                fill: var(--testimonials-arrow-hover-color);
+                fill: var(--content-slider-arrow-hover-color);
             }
         }
 
         &:focus-visible {
-            outline: 2px solid var(--testimonials-accent);
+            outline: 2px solid var(--content-slider-accent);
             outline-offset: 2px;
         }
     }
@@ -97,7 +97,7 @@
 // ==========================================================================
 
 @include reduced-motion {
-    .testimonials .splide__slide {
+    .content-slider .splide__slide {
         transition: none;
     }
 }

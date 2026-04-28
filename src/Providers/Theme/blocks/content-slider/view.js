@@ -1,6 +1,7 @@
 /**
- * Testimonials carousel
- * Initializes Splide on testimonial blocks for accessible carousel behavior.
+ * Content Slider carousel
+ * Initializes Splide on .content-slider.splide containers for an
+ * accessible carousel experience over arbitrary inner blocks.
  */
 
 import Splide from '@splidejs/splide';
@@ -15,19 +16,19 @@ export const SPLIDE_CONFIG = {
     gap: '2rem',
     pauseOnHover: true,
     i18n: {
-        prev: 'Previous testimonial',
-        next: 'Next testimonial',
-        slideX: 'Go to testimonial %s',
+        prev: 'Previous slide',
+        next: 'Next slide',
+        slideX: 'Go to slide %s',
         pageX: 'Go to page %s',
     },
 };
 
 /**
- * Initialize testimonial carousels on the page.
+ * Initialize content slider carousels on the page.
  * Skips initialization if fewer than 2 slides.
  */
-export function initTestimonials() {
-    const carousels = document.querySelectorAll('.testimonials.splide:not(.is-initialized)');
+export function initContentSlider() {
+    const carousels = document.querySelectorAll('.content-slider.splide:not(.is-initialized)');
 
     carousels.forEach((carousel) => {
         const slides = carousel.querySelectorAll('.splide__slide');
@@ -42,4 +43,4 @@ export function initTestimonials() {
 // after parsing (readyState = 'interactive') but DOMContentLoaded may have
 // already fired. Always try immediately since the DOM is ready by the time
 // any deferred script executes.
-initTestimonials();
+initContentSlider();

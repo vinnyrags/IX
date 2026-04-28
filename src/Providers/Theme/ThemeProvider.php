@@ -55,7 +55,7 @@ class ThemeProvider extends Provider
      * @var string[]
      */
     protected array $blocks = [
-        'testimonials',
+        'content-slider',
         'shutter-cards',
         'shutter-card',
     ];
@@ -179,7 +179,7 @@ class ThemeProvider extends Provider
     public function enqueueEditorAssets(): void
     {
         $this->enqueueManifestScript($this->handlePrefix . '-blocks-js', 'blocks/index.js');
-        $this->enqueueParentEditorScript('ix-testimonials-block-editor', 'js/testimonials.js');
+        $this->enqueueParentEditorScript('ix-content-slider-block-editor', 'js/content-slider.js');
         $this->enqueueParentEditorScript('ix-shutter-cards-block-editor', 'js/shutter-cards.js');
         $this->enqueueParentEditorScript('ix-shutter-card-block-editor', 'js/shutter-card.js');
     }
@@ -192,7 +192,7 @@ class ThemeProvider extends Provider
         $this->enqueueDistStyle($this->handlePrefix . '-blocks-style', 'blocks/style-index.css');
 
         // Block CSS lives in parent theme dist/
-        $this->enqueueParentDistStyle('ix-testimonials-block', 'css/testimonials.css');
+        $this->enqueueParentDistStyle('ix-content-slider-block', 'css/content-slider.css');
         $this->enqueueParentDistStyle('ix-shutter-cards-block', 'css/shutter-cards.css');
         $this->enqueueParentDistStyle('ix-shutter-card-block', 'css/shutter-card.css');
 
@@ -209,7 +209,7 @@ class ThemeProvider extends Provider
                 ['wp-edit-blocks', $this->handlePrefix . '-blocks-style']
             );
 
-            $this->enqueueParentDistStyle('ix-testimonials-block-editor', 'css/testimonials-editor.css');
+            $this->enqueueParentDistStyle('ix-content-slider-block-editor', 'css/content-slider-editor.css');
             $this->enqueueParentDistStyle('ix-shutter-cards-block-editor', 'css/shutter-cards-editor.css');
 
             // Load parent compiled CSS in the editor so shared styles (form
