@@ -1,6 +1,8 @@
 // ==========================================================================
-// Modal — generic modal overlay, panel, and button layout.
-// Consumers add modifier classes (e.g. .modal--age-gate) for overrides.
+// Modal — generic positioning, scroll-lock, focus management, and motion.
+// Ships structural rules only. Consumers must provide colors and borders for
+// .modal__panel, .modal__button--primary, .modal__button--secondary, and
+// .modal__message in their child theme.
 // ==========================================================================
 
 :root {
@@ -32,8 +34,6 @@
   max-width: 420px;
   width: 90vw;
   padding: var(--wp--preset--spacing--50);
-  background: var(--wp--preset--color--grey-1);
-  border: 1px solid var(--color-border);
   border-radius: 8px;
   text-align: center;
 }
@@ -44,7 +44,6 @@
 }
 
 .modal__message {
-  color: var(--color-text-muted);
   margin-block-end: var(--wp--preset--spacing--40);
   line-height: 1.5;
 }
@@ -68,7 +67,7 @@
   transition: opacity 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 
   &:focus-visible {
-    outline: 2px solid var(--wp--preset--color--accent-1);
+    outline: 2px solid;
     outline-offset: 2px;
   }
 
@@ -78,8 +77,6 @@
 }
 
 .modal__button--primary {
-  background: var(--wp--preset--color--accent-1);
-  color: var(--color-on-accent);
   border: none;
   font-weight: 700;
   text-transform: uppercase;
@@ -92,11 +89,4 @@
 
 .modal__button--secondary {
   background: transparent;
-  color: var(--color-text-muted);
-  border: 1px solid var(--color-border);
-
-  &:hover {
-    border-color: var(--color-text);
-    color: var(--color-text);
-  }
 }

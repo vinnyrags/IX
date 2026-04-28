@@ -1,7 +1,7 @@
 @use '../common/accessibility' as *;
 
 :focus-visible {
-  outline: 2px solid var(--wp--preset--color--accent-1);
+  outline: 2px solid;
   outline-offset: 2px;
 }
 

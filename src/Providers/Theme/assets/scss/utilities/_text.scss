@@ -10,7 +10,7 @@ h1, h2, h3, h4, h5, h6 {
     [style*="text-decoration: underline"] {
       text-decoration: none !important;
       padding-bottom: 0.15em;
-      background-image: linear-gradient(var(--wp--preset--color--accent-1), var(--wp--preset--color--accent-1));
+      background-image: linear-gradient(currentColor, currentColor);
       background-repeat: no-repeat;
       background-size: 100% 2px;
       background-position: 0 100%;
