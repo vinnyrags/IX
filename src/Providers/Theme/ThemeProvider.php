@@ -15,7 +15,6 @@ use IX\Providers\Theme\Features\DisablePluginUpdates;
 use IX\Providers\Theme\Features\DisablePosts;
 use IX\Providers\Theme\Features\EnableSvgUploads;
 use IX\Providers\Theme\Hooks\AccordionIconEnhancer;
-use IX\Providers\Theme\Hooks\ButtonIconEnhancer;
 use IX\Providers\Theme\Hooks\FeaturedImageFocalPoint;
 use IX\Providers\Theme\Hooks\TermsQuerySupports;
 use IX\Services\IconServiceFactory;
@@ -46,7 +45,6 @@ class ThemeProvider extends Provider
      */
     protected array $hooks = [
         AccordionIconEnhancer::class,
-        ButtonIconEnhancer::class,
         FeaturedImageFocalPoint::class,
         TermsQuerySupports::class,
     ];
@@ -98,10 +96,6 @@ class ThemeProvider extends Provider
         add_action('wp_enqueue_scripts', [$this, 'enqueueFrontendAssets']);
         add_action('enqueue_block_editor_assets', [$this, 'enqueueEditorAssets']);
         add_action('enqueue_block_assets', [$this, 'enqueueBlockAssets']);
-
-        // Button icon editor assets and data localization
-        add_action('enqueue_block_editor_assets', [$this, 'enqueueButtonEditorAssets']);
-        add_action('enqueue_block_editor_assets', [$this, 'localizeButtonIconData'], 99);
 
         parent::register();
     }
@@ -313,37 +307,4 @@ class ThemeProvider extends Provider
         wp_enqueue_script($handle, get_template_directory_uri() . '/dist/' . $path, $allDeps, filemtime($fullPath), true);
     }
 
-    /**
-     * Enqueue button icon picker editor assets.
-     */
-    public function enqueueButtonEditorAssets(): void
-    {
-        $this->enqueueParentEditorScript('ix-button-icon-js', 'js/theme/button.js');
-    }
-
-    /**
-     * Localize icon data for the button icon picker.
-     *
-     * Uses wp_add_inline_script with wp_json_encode for reliable data serialization,
-     * which handles special characters better than wp_localize_script.
-     * Skips localization if the button script hasn't been registered.
-     */
-    public function localizeButtonIconData(): void
-    {
-        $handle = 'ix-button-icon-js';
-        if (!wp_script_is($handle, 'registered') && !wp_script_is($handle, 'enqueued')) {
-            return;
-        }
-
-        $data = [
-            'iconOptions' => $this->iconFactory->options('icon', __('— No Icon —', 'ix')),
-            'iconContentMap' => $this->iconFactory->contentMap('icon'),
-        ];
-
-        wp_add_inline_script(
-            $handle,
-            'var parentThemeButtonIconData = ' . wp_json_encode($data) . ';',
-            'before'
-        );
-    }
 }

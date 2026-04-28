@@ -1,15 +1,15 @@
 <?php
 
-namespace IX\Tests\Integration\Providers\Hooks;
+namespace IX\Tests\Integration\Providers\Features;
 
-use IX\Providers\Theme\Hooks\ButtonIconEnhancer;
+use IX\Providers\Theme\Features\ButtonIconEnhancer;
 use IX\Tests\Support\HasContainer;
-use Mythus\Contracts\Hook;
+use Mythus\Contracts\Feature;
 use Mythus\Contracts\Registrable;
 use WorDBless\BaseTestCase;
 
 /**
- * Integration tests for the ButtonIconEnhancer hook.
+ * Integration tests for the ButtonIconEnhancer feature.
  */
 class ButtonIconEnhancerTest extends BaseTestCase
 {
@@ -33,11 +33,11 @@ class ButtonIconEnhancerTest extends BaseTestCase
     }
 
     /**
-     * Test that ButtonIconEnhancer implements Hook (always-active).
+     * Test that ButtonIconEnhancer implements Feature (toggleable, opt-in per consumer).
      */
-    public function testImplementsHook(): void
+    public function testImplementsFeature(): void
     {
-        $this->assertInstanceOf(Hook::class, $this->feature);
+        $this->assertInstanceOf(Feature::class, $this->feature);
     }
 
     /**
@@ -50,6 +50,32 @@ class ButtonIconEnhancerTest extends BaseTestCase
         $this->assertGreaterThan(
             0,
             has_filter('render_block_core/button', [$this->feature, 'render'])
+        );
+    }
+
+    /**
+     * Test that register method binds the editor enqueue action.
+     */
+    public function testRegisterAddsEditorEnqueueAction(): void
+    {
+        $this->feature->register();
+
+        $this->assertGreaterThan(
+            0,
+            has_action('enqueue_block_editor_assets', [$this->feature, 'enqueueEditorAssets'])
+        );
+    }
+
+    /**
+     * Test that register method binds the icon-data localization action.
+     */
+    public function testRegisterAddsLocalizeAction(): void
+    {
+        $this->feature->register();
+
+        $this->assertGreaterThan(
+            0,
+            has_action('enqueue_block_editor_assets', [$this->feature, 'localizeIconData'])
         );
     }
 

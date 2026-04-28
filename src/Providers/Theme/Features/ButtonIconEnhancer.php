@@ -2,20 +2,27 @@
 
 declare(strict_types=1);
 
-namespace IX\Providers\Theme\Hooks;
+namespace IX\Providers\Theme\Features;
 
 use IX\Services\IconServiceFactory;
-use Mythus\Contracts\Hook;
+use Mythus\Contracts\Feature;
 use DOMDocument;
 use DOMXPath;
 
 /**
- * Enhances the core/button block with icon support on the frontend.
+ * Adds optional icon support to the core/button block.
  *
- * Uses DOMDocument for robust HTML manipulation.
+ * Owns the full surface: the editor-side picker (block attributes +
+ * inspector controls + icon-catalog localization) and the frontend
+ * render filter that injects the SVG into rendered button HTML. As
+ * a Feature, the entire surface is opt-in per consumer — IX no
+ * longer enables it by default.
  */
-class ButtonIconEnhancer implements Hook
+class ButtonIconEnhancer implements Feature
 {
+    private const SCRIPT_HANDLE = 'ix-button-icon-js';
+    private const SCRIPT_PATH = 'js/theme/button.js';
+
     /**
      * Create the enhancer with its icon factory dependency.
      *
@@ -27,7 +34,12 @@ class ButtonIconEnhancer implements Hook
 
     public function register(): void
     {
+        // Frontend: inject SVG into rendered button block output.
         add_filter('render_block_core/button', [$this, 'render'], 10, 2);
+
+        // Editor: register the icon-picker UI and its data.
+        add_action('enqueue_block_editor_assets', [$this, 'enqueueEditorAssets']);
+        add_action('enqueue_block_editor_assets', [$this, 'localizeIconData'], 99);
     }
 
     /**
@@ -51,6 +63,54 @@ class ButtonIconEnhancer implements Hook
         $position = $block['attrs']['iconPosition'] ?? 'right';
 
         return $this->enhanceButton($content, (string) $icon, $position, $iconName);
+    }
+
+    /**
+     * Enqueue the editor-side icon picker script.
+     *
+     * Logic mirrors ThemeProvider::enqueueParentEditorScript() but is
+     * inlined here so the Feature owns its full surface without coupling
+     * back to the parent provider.
+     */
+    public function enqueueEditorAssets(): void
+    {
+        $fullPath = get_template_directory() . '/dist/' . self::SCRIPT_PATH;
+
+        if (!file_exists($fullPath)) {
+            return;
+        }
+
+        wp_enqueue_script(
+            self::SCRIPT_HANDLE,
+            get_template_directory_uri() . '/dist/' . self::SCRIPT_PATH,
+            ['wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-i18n', 'wp-data'],
+            filemtime($fullPath),
+            true
+        );
+    }
+
+    /**
+     * Localize icon catalog data for the editor picker.
+     *
+     * Uses wp_add_inline_script with wp_json_encode for reliable data
+     * serialization. Skips when the picker script isn't loaded.
+     */
+    public function localizeIconData(): void
+    {
+        if (!wp_script_is(self::SCRIPT_HANDLE, 'registered') && !wp_script_is(self::SCRIPT_HANDLE, 'enqueued')) {
+            return;
+        }
+
+        $data = [
+            'iconOptions' => $this->iconFactory->options('icon', __('— No Icon —', 'ix')),
+            'iconContentMap' => $this->iconFactory->contentMap('icon'),
+        ];
+
+        wp_add_inline_script(
+            self::SCRIPT_HANDLE,
+            'var parentThemeButtonIconData = ' . wp_json_encode($data) . ';',
+            'before'
+        );
     }
 
     /**
