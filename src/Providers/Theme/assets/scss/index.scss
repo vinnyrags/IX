@@ -4,7 +4,6 @@
 @use 'common/animation';
 @use 'common/layout';
 @use 'common/form-fields';
-@use 'common/modal';
 
 // Utilities
 @use 'utilities/accessibility';
@@ -21,5 +20,8 @@
 // Blocks
 @use 'blocks/wp-block-columns';
 
-// Vendor
-@use 'vendor/wpforms';
+// Modal SCSS migrated to vincentragosta.io (vinrag-specific component;
+// modal.js lives there). Wpforms base styles + floating labels live in
+// dist/css/features/ now and are enqueued conditionally by the
+// WpFormsBaseStyles + WpFormsFloatingLabels Features (opt-in per
+// consumer's $features array).
