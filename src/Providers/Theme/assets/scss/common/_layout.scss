@@ -11,19 +11,48 @@ html {
   }
 }
 
-// Two-wrapper layout: .site-main is the outer <main> element (header offset
-// only in child themes). .site-content is the inner layout wrapper handling
-// root padding, content-width constraint, alignfull breakout, flow spacing,
-// and section-level spacing. Templates that need different semantics (e.g.
-// project detail's <article>) override {% block main %} to provide their own
-// element with the .site-content class — same layout rules, different HTML tag.
+// .site-content is the inner layout wrapper for the page main content.
+// .site-main is the outer <main> element (header offset only in child
+// themes). Templates that need different semantics (e.g. project detail's
+// <article>) override {% block main %} to provide their own element with
+// the .site-content class — same layout rules, different HTML tag.
+//
+// IX provides the STRUCTURAL behaviors here. Spacing values are deferred
+// to the consumer theme via the --ix-* CSS custom properties below —
+// defaults are 0/none so IX stays unopinionated. Override on .site-content
+// from your child SCSS to wire your spacing scale in. Example:
+//
+//   .site-content {
+//     --ix-root-padding-inline: var(--wp--preset--spacing--40);
+//     --ix-root-padding-block-end: var(--wp--preset--spacing--50);
+//     --ix-section-padding-block: var(--wp--preset--spacing--70);
+//     --ix-section-margin-block: var(--wp--preset--spacing--70);
+//     --ix-section-scroll-offset: var(--wp--preset--spacing--70);
+//     --ix-first-child-margin: var(--wp--preset--spacing--50);
+//   }
+//
+// The has-background container padding (the "give my background sections
+// inset content padding" rule that core writes as
+// :where(.wp-block-group.has-background)) is intentionally NOT shipped
+// here — it's too brand-specific. Consumers own it in their own SCSS.
 //
 // useRootPaddingAwareAlignments is set to false in theme.json because the
-// classes it generates (.has-global-padding, .wp-site-blocks) target elements
-// that don't exist in the Twig templates.
+// classes it generates (.has-global-padding, .wp-site-blocks) target
+// elements that don't exist in the Twig templates.
 
 .site-content {
-  // No bottom padding when last child is a full-bleed background block
+  --ix-root-padding-inline: 0;
+  --ix-root-padding-block-end: 0;
+  --ix-section-padding-block: 0;
+  --ix-section-margin-block: 0;
+  --ix-section-scroll-offset: 0;
+  --ix-first-child-margin: 0;
+
+  padding-inline: var(--ix-root-padding-inline);
+  padding-block-end: var(--ix-root-padding-block-end);
+
+  // No bottom padding when last child is a full-bleed background block —
+  // its background should run to the page edge.
   &:has(> :last-child:is(
     .wp-block-cover,
     .wp-block-columns.has-background,
@@ -32,33 +61,33 @@ html {
     padding-block-end: 0;
   }
 
-  // Root padding (replaces has-global-padding)
-  padding-inline: var(--wp--preset--spacing--40);
-  padding-block-end: var(--wp--preset--spacing--50);
-
-  // Block gap (vertical spacing between direct children)
+  // Block-flow distribution: vertical spacing between root children
+  // sources from theme.json's blockGap. No slug-dependent fallback —
+  // consumers must declare blockGap in theme.json to get spacing here.
   > * + * {
-    margin-block-start: var(--wp--style--block-gap, var(--wp--preset--spacing--40));
+    margin-block-start: var(--wp--style--block-gap);
   }
 
-  // Section-level spacing around container blocks
+  // Section-level spacing around container blocks. The mixin reads
+  // --ix-section-margin-block (default 0).
   @include content-container;
 
-  // Deep-link scroll offset for sections without backgrounds — accounts for
-  // the section-level margin so the scroll lands at the visual start, not the
-  // content edge. Sections with backgrounds go full-bleed and don't need this.
+  // Deep-link scroll offset for anchored sections without backgrounds —
+  // accounts for section-level margin so the scroll lands at the visual
+  // start, not the content edge. Background sections go full-bleed and
+  // don't need this.
   > :is(.wp-block-group, .wp-block-cover, .wp-block-columns)[id]:not(.has-background) {
-    scroll-margin-block-start: var(--wp--preset--spacing--70);
+    scroll-margin-block-start: var(--ix-section-scroll-offset);
   }
 
-  // Default vertical padding for container blocks with backgrounds
+  // Default vertical padding on root container blocks with backgrounds.
   > :is(.wp-block-group, .wp-block-cover, .wp-block-columns).has-background {
-    padding-block: var(--wp--preset--spacing--70);
+    padding-block: var(--ix-section-padding-block);
   }
 
-  // First child spacing
+  // First-child top breathing room.
   > *:first-child {
-    margin-block-start: var(--wp--preset--spacing--50);
+    margin-block-start: var(--ix-first-child-margin);
   }
 
   > :first-child:is(
@@ -69,27 +98,30 @@ html {
     margin-block-start: 0;
   }
 
-  // Full-bleed blocks: negate horizontal padding
+  // Full-bleed: negate root inline padding so the block reaches viewport
+  // edges. Math depends on --ix-root-padding-inline being the same value
+  // used for the .site-content padding-inline above (consumers should
+  // set both from the same spacing-scale token).
   > .alignfull {
-    margin-inline: calc(-1 * var(--wp--preset--spacing--40));
+    margin-inline: calc(-1 * var(--ix-root-padding-inline));
     max-width: none;
-    width: calc(100% + (2 * var(--wp--preset--spacing--40)));
+    width: calc(100% + (2 * var(--ix-root-padding-inline)));
   }
 
-  // Restore inline padding for full-bleed container blocks so content
+  // Restore inline padding for full-bleed group/columns so their content
   // doesn't run flush against viewport edges on narrow screens. Cover
-  // blocks are excluded — backgrounds should be edge-to-edge, and inner
-  // content is constrained separately.
+  // blocks are excluded — their backgrounds should be edge-to-edge, and
+  // their inner content is constrained separately.
   > :is(.wp-block-group, .wp-block-columns).alignfull {
-    padding-inline: var(--wp--preset--spacing--40);
+    padding-inline: var(--ix-root-padding-inline);
   }
 
   > .alignfull:first-child {
     margin-block-start: 0;
   }
 
-  // Constrain cover block inner content to content width so it aligns
-  // with the rest of the document.
+  // Cover inner content stays constrained to content-size even when
+  // the cover spans full-bleed.
   > .wp-block-cover.alignfull > .wp-block-cover__inner-container {
     box-sizing: border-box;
     max-width: var(--wp--style--global--content-size, 1440px);
@@ -97,7 +129,7 @@ html {
     width: 100% !important;
   }
 
-  // Constrained content width (replaces is-layout-constrained)
+  // Constrained content width (replaces is-layout-constrained).
   > *:not(.alignwide):not(.alignfull) {
     max-width: var(--wp--style--global--content-size, 1440px);
     margin-inline: auto;
@@ -107,25 +139,13 @@ html {
     max-width: var(--wp--style--global--wide-size, 1600px);
     margin-inline: auto;
   }
-
 }
 
-// Editor equivalent: section-level spacing in the block editor
+// Editor canvas — receives the same section-level spacing mixin so the
+// editing experience matches the frontend. Consumers set
+// --ix-section-margin-block on this element too (mirror it from the
+// .site-content declaration).
 .is-root-container {
+  --ix-section-margin-block: 0;
   @include content-container;
-}
-
-// Override WordPress core's hardcoded padding on background containers
-// (core uses 1.25em 2.375em — replace with theme spacing variables)
-:where(.wp-block-group.has-background) {
-  padding: var(--wp--preset--spacing--30) var(--wp--preset--spacing--40);
-}
-
-:where(.wp-block-columns.has-background) {
-  padding: var(--wp--preset--spacing--30) var(--wp--preset--spacing--40);
-}
-
-// Default padding for individual columns with backgrounds
-.wp-block-column.has-background {
-  padding: var(--wp--preset--spacing--40);
 }

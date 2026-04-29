@@ -1,6 +1,12 @@
+// Adds vertical breathing room above/below container blocks (group, cover,
+// columns) when they appear next to non-container siblings. Used inside
+// .site-content and .is-root-container.
+//
+// Value comes from the consumer-set --ix-section-margin-block CSS variable
+// (default 0, declared on .site-content / .is-root-container in _layout.scss).
 @mixin content-container {
     > * + :is(.wp-block-group, .wp-block-cover, .wp-block-columns),
     > :is(.wp-block-group, .wp-block-cover, .wp-block-columns) + * {
-        margin-block-start: var(--wp--preset--spacing--70);
+        margin-block-start: var(--ix-section-margin-block);
     }
 }
