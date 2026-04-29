@@ -7,6 +7,6 @@
 @mixin content-container {
     > * + :is(.wp-block-group, .wp-block-cover, .wp-block-columns),
     > :is(.wp-block-group, .wp-block-cover, .wp-block-columns) + * {
-        margin-block-start: var(--ix-section-margin-block);
+        margin-block-start: var(--ix-section-margin-block, 0);
     }
 }

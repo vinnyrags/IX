@@ -40,16 +40,19 @@ html {
 // classes it generates (.has-global-padding, .wp-site-blocks) target
 // elements that don't exist in the Twig templates.
 
+// IX intentionally declares NO default values for the --ix-* variables
+// here. Each var() reference below specifies its own `, 0` fallback so
+// the rules degrade to no-op when a consumer doesn't wire them up.
+//
+// Why not declare defaults on .site-content? Because IX's compiled
+// theme.css typically loads AFTER the consumer's theme.css (the parent
+// theme's enqueue hook fires after the child's, depending on how
+// add_action calls are ordered). Declaring defaults here would override
+// consumer values via source-order cascade. Inline fallbacks sidestep
+// the ordering problem entirely.
 .site-content {
-  --ix-root-padding-inline: 0;
-  --ix-root-padding-block-end: 0;
-  --ix-section-padding-block: 0;
-  --ix-section-margin-block: 0;
-  --ix-section-scroll-offset: 0;
-  --ix-first-child-margin: 0;
-
-  padding-inline: var(--ix-root-padding-inline);
-  padding-block-end: var(--ix-root-padding-block-end);
+  padding-inline: var(--ix-root-padding-inline, 0);
+  padding-block-end: var(--ix-root-padding-block-end, 0);
 
   // No bottom padding when last child is a full-bleed background block —
   // its background should run to the page edge.
@@ -77,17 +80,17 @@ html {
   // start, not the content edge. Background sections go full-bleed and
   // don't need this.
   > :is(.wp-block-group, .wp-block-cover, .wp-block-columns)[id]:not(.has-background) {
-    scroll-margin-block-start: var(--ix-section-scroll-offset);
+    scroll-margin-block-start: var(--ix-section-scroll-offset, 0);
   }
 
   // Default vertical padding on root container blocks with backgrounds.
   > :is(.wp-block-group, .wp-block-cover, .wp-block-columns).has-background {
-    padding-block: var(--ix-section-padding-block);
+    padding-block: var(--ix-section-padding-block, 0);
   }
 
   // First-child top breathing room.
   > *:first-child {
-    margin-block-start: var(--ix-first-child-margin);
+    margin-block-start: var(--ix-first-child-margin, 0);
   }
 
   > :first-child:is(
@@ -103,9 +106,9 @@ html {
   // used for the .site-content padding-inline above (consumers should
   // set both from the same spacing-scale token).
   > .alignfull {
-    margin-inline: calc(-1 * var(--ix-root-padding-inline));
+    margin-inline: calc(-1 * var(--ix-root-padding-inline, 0));
     max-width: none;
-    width: calc(100% + (2 * var(--ix-root-padding-inline)));
+    width: calc(100% + (2 * var(--ix-root-padding-inline, 0)));
   }
 
   // Restore inline padding for full-bleed group/columns so their content
@@ -113,7 +116,7 @@ html {
   // blocks are excluded — their backgrounds should be edge-to-edge, and
   // their inner content is constrained separately.
   > :is(.wp-block-group, .wp-block-columns).alignfull {
-    padding-inline: var(--ix-root-padding-inline);
+    padding-inline: var(--ix-root-padding-inline, 0);
   }
 
   > .alignfull:first-child {
@@ -144,8 +147,8 @@ html {
 // Editor canvas — receives the same section-level spacing mixin so the
 // editing experience matches the frontend. Consumers set
 // --ix-section-margin-block on this element too (mirror it from the
-// .site-content declaration).
+// .site-content declaration). No default declared here for the same
+// stylesheet-load-order reason as .site-content above.
 .is-root-container {
-  --ix-section-margin-block: 0;
   @include content-container;
 }
