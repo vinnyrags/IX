@@ -2,16 +2,19 @@
  * Content Slider carousel
  * Initializes Splide on .content-slider.splide containers for an
  * accessible carousel experience over arbitrary inner blocks.
+ *
+ * Per-block toggles (arrows, autoplay) come from data-arrows /
+ * data-autoplay on the block wrapper (set by render.php from the
+ * showArrows / autoplay attributes). Defaults match block.json
+ * (both true).
  */
 
 import Splide from '@splidejs/splide';
 
-export const SPLIDE_CONFIG = {
+export const SPLIDE_BASE_CONFIG = {
     type: 'loop',
     perPage: 1,
     pagination: false,
-    arrows: true,
-    autoplay: false,
     speed: 400,
     gap: '2rem',
     pauseOnHover: true,
@@ -22,6 +25,36 @@ export const SPLIDE_CONFIG = {
         pageX: 'Go to page %s',
     },
 };
+
+/**
+ * Resolve the wrapper element that carries the per-block data attributes.
+ */
+function getWrapper(carousel) {
+    return carousel.closest('.wp-block-ix-content-slider') || carousel.parentElement;
+}
+
+/**
+ * Read a boolean data attribute. Falls back to `fallback` if missing.
+ */
+function readBoolAttr(carousel, attrName, fallback) {
+    const wrapper = getWrapper(carousel);
+    if (!wrapper) return fallback;
+    const value = wrapper.getAttribute(attrName);
+    if (value === null) return fallback;
+    return value === 'true';
+}
+
+/**
+ * Read a numeric data attribute. Falls back to `fallback` if missing or
+ * not a positive finite number.
+ */
+function readNumberAttr(carousel, attrName, fallback) {
+    const wrapper = getWrapper(carousel);
+    if (!wrapper) return fallback;
+    const raw = wrapper.getAttribute(attrName);
+    const num = parseFloat(raw);
+    return Number.isFinite(num) && num > 0 ? num : fallback;
+}
 
 /**
  * Initialize content slider carousels on the page.
@@ -43,7 +76,16 @@ export function initContentSlider() {
             return;
         }
 
-        new Splide(carousel, SPLIDE_CONFIG).mount();
+        const showArrows       = readBoolAttr(carousel, 'data-arrows', true);
+        const autoplay         = readBoolAttr(carousel, 'data-autoplay', true);
+        const autoplayIntervalSec = readNumberAttr(carousel, 'data-autoplay-interval', 5);
+
+        new Splide(carousel, {
+            ...SPLIDE_BASE_CONFIG,
+            arrows: showArrows,
+            autoplay,
+            interval: Math.round(autoplayIntervalSec * 1000),
+        }).mount();
     });
 }
 

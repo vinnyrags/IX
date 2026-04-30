@@ -15,6 +15,20 @@
       "margin": true
     }
   },
+  "attributes": {
+    "showArrows": {
+      "type": "boolean",
+      "default": true
+    },
+    "autoplay": {
+      "type": "boolean",
+      "default": true
+    },
+    "autoplayInterval": {
+      "type": "number",
+      "default": 5
+    }
+  },
   "textdomain": "ix",
   "viewScript": "file:../../../../../dist/js/content-slider-view.js",
   "render": "file:./render.php"
