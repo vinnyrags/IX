@@ -4,7 +4,7 @@
   "type": "wordpress-theme",
   "license": "MIT",
   "require": {
-    "php": ">=8.4",
+    "php": ">=8.3",
     "timber/timber": "2.x-dev",
     "enshrined/svg-sanitize": "^0.22.0"
   },
