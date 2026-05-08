@@ -1,4 +1,4 @@
-<div class="shutter-card" aria-expanded="true">
+<div class="shutter-card">
     <span class="shutter-card__id" aria-hidden="true">{{ card_index }}</span>
 
     {% if title %}
@@ -13,7 +13,9 @@
         <p class="shutter-card__description">{{ description|raw }}</p>
     {% endif %}
 
-    <button type="button" class="shutter-card__toggle" aria-label="Toggle card">
+    {# aria-expanded lives only on the button (the lone interactive control). #}
+    {# CSS reads it via :has() so the wrapper needs no state attribute.       #}
+    <button type="button" class="shutter-card__toggle" aria-label="Toggle card" aria-expanded="true">
         {{ icon('close') | raw }}
     </button>
 </div>

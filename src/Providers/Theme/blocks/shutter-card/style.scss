@@ -14,7 +14,10 @@
   overflow: hidden;
   transition: background-color 0.4s ease, color 0.4s ease;
 
-  &[aria-expanded="false"] {
+  // The toggle button's aria-expanded is the single source of state
+  // (it's a real interactive control, ARIA is valid there). The wrapper
+  // reads that state via :has() so it carries no state attribute itself.
+  &:has(.shutter-card__toggle[aria-expanded="false"]) {
     cursor: pointer;
   }
 
@@ -80,7 +83,7 @@
 }
 
 // Mobile: collapse content for accordion
-.shutter-card[aria-expanded="false"] :is(.shutter-card__subtitle, .shutter-card__description) {
+.shutter-card:has(.shutter-card__toggle[aria-expanded="false"]) :is(.shutter-card__subtitle, .shutter-card__description) {
   opacity: 0;
   visibility: hidden;
   max-height: 0;
@@ -90,13 +93,13 @@
 
 // Desktop: just fade, preserve space
 @include container(shutter-cards, lg) {
-  .shutter-card[aria-expanded="false"] :is(.shutter-card__subtitle, .shutter-card__description) {
+  .shutter-card:has(.shutter-card__toggle[aria-expanded="false"]) :is(.shutter-card__subtitle, .shutter-card__description) {
     max-height: none;
     overflow: visible;
   }
 }
 
-.shutter-card[aria-expanded="false"] .shutter-card__toggle {
+.shutter-card:has(.shutter-card__toggle[aria-expanded="false"]) .shutter-card__toggle {
   transform: rotate(45deg);
 }
 
