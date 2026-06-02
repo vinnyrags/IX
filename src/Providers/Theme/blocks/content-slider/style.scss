@@ -21,14 +21,19 @@
     flex-direction: column;
     margin-inline: auto;
 
-    // Splide slide layout — stretch slides to equal height
+    // Slide content fills the slide on both axes regardless of block type:
+    //   - cross-axis (horizontal) fill comes from align-items: stretch (the
+    //     default in flex-direction: column)
+    //   - main-axis (vertical) fill comes from flex-grow: 1 on every child
+    // Avoids enumerating block types (.wp-block-quote, .wp-block-pullquote, ...)
+    // so any block dropped into a slide — quote, pullquote, cover, custom —
+    // fills the slide the same way.
     .splide__slide {
         display: flex;
-        align-items: stretch;
+        flex-direction: column;
 
-        .wp-block-quote,
-        .wp-block-pullquote {
-            width: 100%;
+        > * {
+            flex-grow: 1;
         }
     }
 
@@ -90,6 +95,21 @@
         }
     }
 
+}
+
+// Vertical-center toggle. Splide makes every slide the height of the tallest
+// slide (via .splide__list { align-items: stretch }), so when slide content
+// has varying heights the shorter ones sit at the top of their slide by
+// default. Setting centerContent: true on the block emits
+// data-center-content="true" on the wrapper, which switches the slide from
+// "stretch the child to fill" to "size the child to its content and center
+// it on the main axis." Cross-axis (horizontal) fill is preserved.
+.wp-block-ix-content-slider[data-center-content="true"] .content-slider .splide__slide {
+    justify-content: center;
+
+    > * {
+        flex-grow: 0;
+    }
 }
 
 // ==========================================================================

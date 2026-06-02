@@ -27,6 +27,14 @@
     "autoplayInterval": {
       "type": "number",
       "default": 5
+    },
+    "transition": {
+      "type": "string",
+      "default": "slide"
+    },
+    "centerContent": {
+      "type": "boolean",
+      "default": false
     }
   },
   "textdomain": "ix",

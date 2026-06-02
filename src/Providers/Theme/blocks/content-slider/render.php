@@ -21,17 +21,22 @@ $autoplayInterval = isset($attributes['autoplayInterval']) ? (float) $attributes
 if ($autoplayInterval <= 0) {
     $autoplayInterval = 5.0;
 }
+$centerContent    = !empty($attributes['centerContent']);
+$transition       = (isset($attributes['transition']) && $attributes['transition'] === 'fade') ? 'fade' : 'slide';
 
 $context = Timber::context();
 $context['inner_blocks']     = $rendered_inner_blocks;
 $context['show_arrows']      = $showArrows;
 $context['autoplay']         = $autoplay;
 $context['autoplay_interval'] = $autoplayInterval;
+$context['transition']       = $transition;
 
 $wrapper_attributes = get_block_wrapper_attributes([
     'data-arrows'            => $showArrows ? 'true' : 'false',
     'data-autoplay'          => $autoplay ? 'true' : 'false',
     'data-autoplay-interval' => (string) $autoplayInterval,
+    'data-center-content'    => $centerContent ? 'true' : 'false',
+    'data-transition'        => $transition,
 ]);
 
 echo '<div ' . $wrapper_attributes . '>';

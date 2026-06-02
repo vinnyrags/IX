@@ -79,9 +79,13 @@ export function initContentSlider() {
         const showArrows       = readBoolAttr(carousel, 'data-arrows', true);
         const autoplay         = readBoolAttr(carousel, 'data-autoplay', true);
         const autoplayIntervalSec = readNumberAttr(carousel, 'data-autoplay-interval', 5);
+        const isFade           = getWrapper(carousel)?.getAttribute('data-transition') === 'fade';
 
         new Splide(carousel, {
             ...SPLIDE_BASE_CONFIG,
+            // Splide's fade type crossfades slides in place; it can't loop, so it
+            // pairs with rewind. Default ('slide') keeps the looping carousel.
+            ...(isFade ? { type: 'fade', rewind: true } : {}),
             arrows: showArrows,
             autoplay,
             interval: Math.round(autoplayIntervalSec * 1000),
