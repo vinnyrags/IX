@@ -196,10 +196,12 @@ class ThemeProvider extends Provider
         $this->enqueueParentDistStyle('ix-shutter-cards-block', 'css/shutter-cards.css');
         $this->enqueueParentDistStyle('ix-shutter-card-block', 'css/shutter-card.css');
 
-        // Shutter cards frontend view script (enqueued here instead of block.json
-        // viewScript so it resolves from parent dist/ when child theme is active)
+        // Frontend view scripts (enqueued here instead of via each block.json
+        // viewScript so they resolve from parent dist/ when a child theme is
+        // active — the block.json file: path resolves against the child).
         if (!is_admin()) {
             $this->enqueueParentDistScript('ix-shutter-cards-view', 'js/shutter-cards-view.js');
+            $this->enqueueParentDistScript('ix-content-slider-view', 'js/content-slider-view.js');
         }
 
         if (is_admin()) {

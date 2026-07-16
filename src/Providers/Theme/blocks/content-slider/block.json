@@ -38,6 +38,5 @@
     }
   },
   "textdomain": "ix",
-  "viewScript": "file:../../../../../dist/js/content-slider-view.js",
   "render": "file:./render.php"
 }
