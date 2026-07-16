@@ -42,11 +42,25 @@ const isWatch = process.argv.includes('--watch');
  *
  * If scripts/build-providers.config.js exists in the theme root, it may export:
  *   - sassLoadPaths: string[] — additional load paths for sass compiler
+ *   - extraProviderDirs: string[] — additional "Providers" roots to compile into
+ *     this theme's dist/ (e.g. a Composer package's src/Providers). Assets are
+ *     discovered and output exactly like in-theme providers; the theme's own
+ *     providers are compiled last so a same-named theme provider overrides a
+ *     vendor one.
  */
-let config = { sassLoadPaths: [] };
+let config = { sassLoadPaths: [], extraProviderDirs: [] };
 const configPath = path.join(THEME_ROOT, 'scripts', 'build-providers.config.js');
 if (fs.existsSync(configPath)) {
     config = { ...config, ...require(configPath) };
+}
+
+/**
+ * Every "Providers" root to scan, in compile order. Extra (vendor) dirs first so
+ * a same-named provider in the theme's own src/Providers is compiled last and
+ * therefore wins on any dist output collision.
+ */
+function providerRoots() {
+    return [...(config.extraProviderDirs || []), PROVIDERS_DIR];
 }
 
 /**
@@ -205,22 +219,21 @@ function discoverProviderBlocks(providerPath, providerName) {
 }
 
 /**
- * Find all provider directories with assets
+ * Find all provider directories with assets under a single "Providers" root.
  */
-function discoverProviders() {
+function discoverProvidersIn(providersDir) {
     const providers = [];
 
-    if (!fs.existsSync(PROVIDERS_DIR)) {
-        console.log('No Providers directory found');
+    if (!fs.existsSync(providersDir)) {
         return providers;
     }
 
-    const entries = fs.readdirSync(PROVIDERS_DIR, { withFileTypes: true });
+    const entries = fs.readdirSync(providersDir, { withFileTypes: true });
 
     for (const entry of entries) {
         if (!entry.isDirectory()) continue;
 
-        const providerPath = path.join(PROVIDERS_DIR, entry.name);
+        const providerPath = path.join(providersDir, entry.name);
         const assetsPath = path.join(providerPath, 'assets');
 
         const kebabName = toKebabCase(entry.name);
@@ -273,6 +286,38 @@ function discoverProviders() {
 
         // Only add if provider has assets, features, or blocks
         if (provider.scss || provider.featureScss.length > 0 || provider.jsFiles.length > 0 || provider.blocks.length > 0) {
+            providers.push(provider);
+        }
+    }
+
+    return providers;
+}
+
+/**
+ * Find all provider directories with assets across every provider root
+ * (the theme's own src/Providers plus any config.extraProviderDirs).
+ *
+ * Roots are scanned in providerRoots() order (extras first, theme last), so a
+ * theme provider that shares a kebab name with a vendor one is compiled last and
+ * overwrites the vendor output. Collisions are logged.
+ */
+function discoverProviders() {
+    const roots = providerRoots();
+
+    if (!fs.existsSync(PROVIDERS_DIR) && roots.length === 1) {
+        console.log('No Providers directory found');
+        return [];
+    }
+
+    const providers = [];
+    const seen = new Map();
+
+    for (const root of roots) {
+        for (const provider of discoverProvidersIn(root)) {
+            if (seen.has(provider.kebabName)) {
+                console.log(`  Note: provider "${provider.kebabName}" in ${path.relative(THEME_ROOT, root)} overrides an earlier one of the same name`);
+            }
+            seen.set(provider.kebabName, root);
             providers.push(provider);
         }
     }
