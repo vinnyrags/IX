@@ -1,8 +1,35 @@
 @use '../common/accessibility' as *;
 
+// ==========================================================================
+// Keyboard-focus ring (a11y baseline) — unopinionated.
+//
+// IX ships only the ring STRUCTURE and neutral defaults; it imposes no brand
+// colour. Sites tune the ring by setting custom properties on :root — never by
+// re-declaring the `:focus-visible` selector.
+//
+// Defaults are supplied as `var(…, fallback)` (not a `:root { … }` declaration)
+// on purpose: a `:root` default would compete with a child's `:root` override
+// and lose wherever IX's stylesheet enqueues AFTER the child's — which is why a
+// child previously needed a `:root :focus-visible` specificity hack. With the
+// fallback pattern IX declares no token, so a site's `:root { --ix-focus-* }` is
+// uncontested and load-order-proof.
+//
+//   Tokens (all optional):
+//     --ix-focus-ring-color    default: currentColor  (adaptive; back-compatible)
+//     --ix-focus-ring-width    default: 2px
+//     --ix-focus-ring-offset   default: 2px
+//
+//   Per-site override (a fixed ring where currentColor can't be trusted, e.g. a
+//   single-hue brand ground or white-on-colour buttons):
+//     :root { --ix-focus-ring-color: var(--wp--preset--color--<token>); }
+//
+// Component styles may still define their own (more specific) :focus-visible to
+// override this baseline where a control needs a bespoke ring.
+// ==========================================================================
+
 :focus-visible {
-  outline: 2px solid;
-  outline-offset: 2px;
+  outline: var(--ix-focus-ring-width, 2px) solid var(--ix-focus-ring-color, currentColor);
+  outline-offset: var(--ix-focus-ring-offset, 2px);
 }
 
 .wp-element-button:focus:not(:focus-visible),
