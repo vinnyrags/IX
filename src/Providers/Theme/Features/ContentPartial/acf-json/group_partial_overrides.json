@@ -1,0 +1,103 @@
+{
+    "key": "group_partial_overrides",
+    "title": "Header & Footer",
+    "fields": [
+        {
+            "key": "field_partial_overrides_header_mode",
+            "label": "Header",
+            "name": "header_mode",
+            "type": "button_group",
+            "instructions": "How to render the header on this page. \"Default\" uses the site-wide default partial; \"Custom\" lets you pick a specific partial; \"Disabled\" renders no header at all.",
+            "required": 0,
+            "choices": {
+                "default": "Default",
+                "custom": "Custom",
+                "disabled": "Disabled"
+            },
+            "default_value": "default",
+            "layout": "horizontal",
+            "return_format": "value"
+        },
+        {
+            "key": "field_partial_overrides_header_partial",
+            "label": "Custom header partial",
+            "name": "header_partial",
+            "type": "post_object",
+            "instructions": "Pick a header partial to use on this page.",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_partial_overrides_header_mode",
+                        "operator": "==",
+                        "value": "custom"
+                    }
+                ]
+            ],
+            "post_type": ["content-partial"],
+            "taxonomy": [],
+            "filters": ["search"],
+            "return_format": "object",
+            "multiple": 0,
+            "allow_null": 1
+        },
+        {
+            "key": "field_partial_overrides_footer_mode",
+            "label": "Footer",
+            "name": "footer_mode",
+            "type": "button_group",
+            "instructions": "How to render the footer on this page. \"Default\" uses the site-wide default partial; \"Custom\" lets you pick a specific partial; \"Disabled\" renders no footer at all.",
+            "required": 0,
+            "choices": {
+                "default": "Default",
+                "custom": "Custom",
+                "disabled": "Disabled"
+            },
+            "default_value": "default",
+            "layout": "horizontal",
+            "return_format": "value"
+        },
+        {
+            "key": "field_partial_overrides_footer_partial",
+            "label": "Custom footer partial",
+            "name": "footer_partial",
+            "type": "post_object",
+            "instructions": "Pick a footer partial to use on this page.",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_partial_overrides_footer_mode",
+                        "operator": "==",
+                        "value": "custom"
+                    }
+                ]
+            ],
+            "post_type": ["content-partial"],
+            "taxonomy": [],
+            "filters": ["search"],
+            "return_format": "object",
+            "multiple": 0,
+            "allow_null": 1
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "!=",
+                "value": "content-partial"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "side",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "Override which header / footer partial renders on this page.",
+    "show_in_rest": 1,
+    "modified": 1777891200
+}

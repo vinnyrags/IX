@@ -8,6 +8,7 @@ use DI\Container;
 use IX\Models\Image;
 use IX\Models\Post;
 use IX\Providers\Provider;
+use IX\Providers\Theme\Features\ContentPartial\ContentPartial;
 use IX\Providers\Theme\Features\DisableBlocks;
 use IX\Providers\Theme\Features\DisableComments;
 use IX\Providers\Theme\Features\DisableDefaultPatterns;
@@ -66,6 +67,7 @@ class ThemeProvider extends Provider
      * @var array<class-string>
      */
     protected array $features = [
+        ContentPartial::class,
         DisableBlocks::class,
         DisableComments::class,
         DisableDefaultPatterns::class,

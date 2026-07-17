@@ -1,0 +1,36 @@
+{
+    "key": "group_content_partial_fields",
+    "title": "Partial Settings",
+    "fields": [
+        {
+            "key": "field_content_partial_is_default",
+            "label": "Use as default for this partial type",
+            "name": "is_default",
+            "type": "true_false",
+            "instructions": "When checked, this partial renders site-wide for any page that doesn't override it. Saving this with another default of the same type will automatically uncheck the others.",
+            "required": 0,
+            "ui": 1,
+            "ui_on_text": "Default",
+            "ui_off_text": "Not default"
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "content-partial"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "side",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "",
+    "show_in_rest": 1,
+    "modified": 1777891200
+}
