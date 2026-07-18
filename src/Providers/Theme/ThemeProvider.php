@@ -17,6 +17,7 @@ use IX\Providers\Theme\Features\DisablePosts;
 use IX\Providers\Theme\Features\EnableSvgUploads;
 use IX\Providers\Theme\Hooks\AccordionIconEnhancer;
 use IX\Providers\Theme\Hooks\FeaturedImageFocalPoint;
+use IX\Providers\Theme\Hooks\HeadingBlockStyles;
 use IX\Providers\Theme\Hooks\TermsQuerySupports;
 use IX\Services\IconServiceFactory;
 use Timber\Attachment;
@@ -47,6 +48,7 @@ class ThemeProvider extends Provider
     protected array $hooks = [
         AccordionIconEnhancer::class,
         FeaturedImageFocalPoint::class,
+        HeadingBlockStyles::class,
         TermsQuerySupports::class,
     ];
 

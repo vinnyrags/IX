@@ -1,0 +1,42 @@
+// Screen-reader-only heading — visually hides the heading while keeping it in
+// the accessibility tree (for section labels that would be visual noise). The
+// `is-style-sr-only` block style is registered by
+// IX\Providers\Theme\Hooks\HeadingBlockStyles; this is its frontend + editor CSS.
+.wp-block-heading.is-style-sr-only {
+    border: 0;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    height: 1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
+    word-wrap: normal;
+}
+
+// In the editor, reveal it with a dashed outline + label so authors can see and
+// select the otherwise-invisible heading.
+.editor-styles-wrapper .wp-block-heading.is-style-sr-only {
+    border: 1px dashed currentColor;
+    clip: auto;
+    clip-path: none;
+    height: auto;
+    opacity: 0.65;
+    overflow: visible;
+    padding: 0.5rem 0.75rem;
+    position: relative;
+    white-space: normal;
+    width: auto;
+
+    &::before {
+        content: '👁 Screen reader only';
+        display: block;
+        font-size: 0.6875rem;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        opacity: 0.7;
+        padding-block-end: 0.25rem;
+        text-transform: uppercase;
+    }
+}

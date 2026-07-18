@@ -5,6 +5,23 @@ follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions are
 derived from annotated git tags (no `version` field in `composer.json`).
 Entries predating this file (≤ v1.2.0) are tracked only as tags.
 
+## [1.6.0] - 2026-07-18
+
+### Added
+
+- **Shared `Screen reader only` heading block style** (`core/heading` →
+  `is-style-sr-only`) — visually hides a heading while keeping it in the
+  accessibility tree, for section labels that would otherwise be visual noise.
+  New `IX\Providers\Theme\Hooks\HeadingBlockStyles` (registered in the Theme
+  provider's `$hooks`) + its frontend/editor CSS in
+  `blocks/_wp-block-heading.scss` (the editor reveals it with a dashed outline +
+  "👁 Screen reader only" label). Consolidated from CBA/AVFTB/MF, which each
+  declared it locally; `register_block_style` is additive, so a child's own
+  `HeadingBlockStyles` (brand variants like uppercase) still merges cleanly. The
+  `is-style-sr-only` class name is unchanged, so existing content keeps working —
+  no CMS migration. vincentragosta.io/ellenharvey (no prior sr-only) inherit it
+  additively.
+
 ## [1.5.0] - 2026-07-17
 
 ### Added

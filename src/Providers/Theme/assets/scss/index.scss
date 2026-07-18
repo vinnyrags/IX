@@ -19,6 +19,7 @@
 
 // Blocks
 @use 'blocks/wp-block-columns';
+@use 'blocks/wp-block-heading';
 
 // Modal SCSS migrated to vincentragosta.io (vinrag-specific component;
 // modal.js lives there). Wpforms base styles + floating labels live in
