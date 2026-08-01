@@ -8,7 +8,10 @@ vi.mock('@splidejs/splide', () => {
 });
 
 import { default as Splide, __mount as mountMock } from '@splidejs/splide';
-import { SPLIDE_CONFIG, initContentSlider } from '../../../../../../src/Providers/Theme/blocks/content-slider/view.js';
+import {
+    SPLIDE_BASE_CONFIG,
+    initContentSlider,
+} from '../../../../../../src/Providers/Theme/blocks/content-slider/view.js';
 
 /**
  * Build a content-slider carousel with N slides
@@ -47,40 +50,60 @@ beforeEach(() => {
     mountMock.mockClear();
 });
 
-describe('SPLIDE_CONFIG', () => {
+describe('SPLIDE_BASE_CONFIG', () => {
     it('sets type to loop', () => {
-        expect(SPLIDE_CONFIG.type).toBe('loop');
+        expect(SPLIDE_BASE_CONFIG.type).toBe('loop');
     });
 
     it('shows one slide at a time', () => {
-        expect(SPLIDE_CONFIG.perPage).toBe(1);
+        expect(SPLIDE_BASE_CONFIG.perPage).toBe(1);
     });
 
-    it('disables pagination and enables arrows', () => {
-        expect(SPLIDE_CONFIG.pagination).toBe(false);
-        expect(SPLIDE_CONFIG.arrows).toBe(true);
-    });
-
-    it('disables autoplay', () => {
-        expect(SPLIDE_CONFIG.autoplay).toBe(false);
+    it('disables pagination', () => {
+        expect(SPLIDE_BASE_CONFIG.pagination).toBe(false);
     });
 
     it('has accessible i18n labels', () => {
-        expect(SPLIDE_CONFIG.i18n.prev).toBe('Previous slide');
-        expect(SPLIDE_CONFIG.i18n.next).toBe('Next slide');
-        expect(SPLIDE_CONFIG.i18n.slideX).toBe('Go to slide %s');
-        expect(SPLIDE_CONFIG.i18n.pageX).toBe('Go to page %s');
+        expect(SPLIDE_BASE_CONFIG.i18n.prev).toBe('Previous slide');
+        expect(SPLIDE_BASE_CONFIG.i18n.next).toBe('Next slide');
+        expect(SPLIDE_BASE_CONFIG.i18n.slideX).toBe('Go to slide %s');
+        expect(SPLIDE_BASE_CONFIG.i18n.pageX).toBe('Go to page %s');
     });
 });
 
 describe('initContentSlider', () => {
-    it('initializes Splide on carousel with 2+ slides', () => {
+    it('initializes Splide with the base config plus per-block defaults', () => {
         const carousel = createContentSlider(3);
 
         initContentSlider();
 
-        expect(Splide).toHaveBeenCalledWith(carousel, SPLIDE_CONFIG);
+        // arrows/autoplay default to true (block.json defaults) and the
+        // autoplay interval defaults to 5s when no data-* overrides are present.
+        expect(Splide).toHaveBeenCalledWith(carousel, {
+            ...SPLIDE_BASE_CONFIG,
+            arrows: true,
+            autoplay: true,
+            interval: 5000,
+        });
         expect(mountMock).toHaveBeenCalled();
+    });
+
+    it('honors per-block data attributes to toggle arrows and autoplay', () => {
+        const wrapper = document.createElement('div');
+        wrapper.classList.add('wp-block-ix-content-slider');
+        wrapper.setAttribute('data-arrows', 'false');
+        wrapper.setAttribute('data-autoplay', 'false');
+        document.body.appendChild(wrapper);
+
+        const carousel = createContentSlider(3);
+        wrapper.appendChild(carousel); // reparent under the block wrapper
+
+        initContentSlider();
+
+        expect(Splide).toHaveBeenCalledWith(
+            carousel,
+            expect.objectContaining({ arrows: false, autoplay: false })
+        );
     });
 
     it('skips Splide initialization for fewer than 2 slides but marks the container is-initialized so visibility lifts', () => {
