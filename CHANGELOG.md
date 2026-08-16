@@ -5,6 +5,43 @@ follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions are
 derived from annotated git tags (no `version` field in `composer.json`).
 Entries predating this file (≤ v1.2.0) are tracked only as tags.
 
+## [1.6.2] - 2026-08-16
+
+### Security
+
+- **Bumped `twig/twig` 3.24.0 → 3.28.0.** 3.24.0 carried 17 advisories, the
+  substantive ones being Twig sandbox filter/tag/function allow-list bypasses
+  (CVE-2026-49981, CVE-2026-48808 and related), fixed upstream in 3.27.0. Twig
+  arrives transitively via `timber/timber: 2.x-dev`.
+
+  Practical risk for IX consumers was low — Timber renders developer-authored
+  templates, not untrusted input, and the sandbox is not enabled for theme
+  rendering — so this is hygiene rather than an exploitable hole. It is shipped
+  separately from any feature work so it can be adopted on its own.
+
+  **Note for consumers:** every site carries *three* vendor copies of Twig —
+  root, `themes/ix`, and the child theme — and they drift independently. All five
+  consuming sites were bumped directly on 2026-08-16; this release closes the
+  parent-theme copy at source. Adopting it via
+  `composer update vincentragosta/ix` **wipes `ix/node_modules`**, so run
+  `npm install` inside the ix copy afterwards to restore build and test tooling.
+
+## [1.6.1] - 2026-08-01
+
+### Fixed
+
+- **Polyfilled `localStorage` for Node 22+ in the test setup.** Under Node's
+  built-in Web Storage, jsdom's `localStorage` isn't wired onto the global in the
+  vitest environment, leaving it undefined — which broke the `afterEach` cleanup
+  and any code under test that reads or writes it. `scripts/test-setup.js` now
+  installs a minimal Map-backed shim when the environment doesn't provide one;
+  inert wherever jsdom already supplies it.
+- De-staled `content-slider/view.test.js` for the `SPLIDE_CONFIG` →
+  `SPLIDE_BASE_CONFIG` rename.
+
+*(Logged retroactively 2026-08-16 — this version was tagged but never added to the
+changelog, which left a gap between 1.6.0 and 1.6.2.)*
+
 ## [1.6.0] - 2026-07-18
 
 ### Added
