@@ -5,6 +5,46 @@ follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions are
 derived from annotated git tags (no `version` field in `composer.json`).
 Entries predating this file (≤ v1.2.0) are tracked only as tags.
 
+## [1.7.0] - 2026-08-24
+
+### Security
+
+- **`DisableAuthorArchives` — a default-on Feature that stops WordPress
+  publishing valid login names to anonymous visitors.** New
+  `IX\Providers\Theme\Features\DisableAuthorArchives`, registered in the Theme
+  provider's `$features`, so consumers inherit it without opting in.
+
+  WordPress leaks usernames through four separate routes, and closing only the
+  obvious one leaves the account list readable:
+
+  1. `/author/<login>/` — the archive itself, which Google indexes
+  2. `/?author=<id>` — 301s to the archive, leaking the login in `Location`
+  3. `/wp-sitemap-users-1.xml` — core feeds those archive URLs to search engines
+  4. `/wp-json/wp/v2/users` — returns every user's slug as JSON
+
+  All four were open on all four ARTHOUSE sites. This is not theoretical: on
+  2026-08-11 a site was compromised by an attacker logging in as a known
+  administrator with a valid password. They did not have to guess the account —
+  `/author/<login>/` was indexed and `/?author=1` handed the name over on
+  request. Username enumeration plus an unthrottled login form is most of that
+  attack, and rate limiting alone does not fix it, because the attacker still
+  knows precisely which account to target.
+
+  The guard hooks `template_redirect` at **priority 0** and unhooks
+  `redirect_canonical`. That ordering is load-bearing rather than incidental:
+  core registers `redirect_canonical()` at priority 10, and it is what converts
+  `/?author=1` into the leaking 301 — so setting a 404 at any later priority
+  still gives the username away. `DisableAuthorArchivesTest` asserts the
+  priority for exactly that reason.
+
+  Viewers who can already `list_users` keep normal behaviour, so the block
+  editor's author controls are unaffected. A site that genuinely wants public
+  author archives opts out in its child provider:
+  `DisableAuthorArchives::class => false`.
+
+  Shucked is **not** covered — it runs no Mythus/IX — and needs the standalone
+  deploy-kit mu-plugin instead.
+
 ## [1.6.2] - 2026-08-16
 
 ### Security

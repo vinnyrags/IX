@@ -9,6 +9,7 @@ use IX\Models\Image;
 use IX\Models\Post;
 use IX\Providers\Provider;
 use IX\Providers\Theme\Features\ContentPartial\ContentPartial;
+use IX\Providers\Theme\Features\DisableAuthorArchives;
 use IX\Providers\Theme\Features\DisableBlocks;
 use IX\Providers\Theme\Features\DisableComments;
 use IX\Providers\Theme\Features\DisableDefaultPatterns;
@@ -70,6 +71,7 @@ class ThemeProvider extends Provider
      */
     protected array $features = [
         ContentPartial::class,
+        DisableAuthorArchives::class,
         DisableBlocks::class,
         DisableComments::class,
         DisableDefaultPatterns::class,
