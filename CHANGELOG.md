@@ -5,6 +5,30 @@ follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions are
 derived from annotated git tags (no `version` field in `composer.json`).
 Entries predating this file (≤ v1.2.0) are tracked only as tags.
 
+## [1.7.2] - 2026-08-26
+
+### Fixed
+
+- **`author.php` still mis-handled a non-existent author after 1.7.1.** The
+  1.7.1 guard checked the result of `Timber::get_user()` but still passed it the
+  raw query var, and that turned out to matter: when an `/author/<slug>/` request
+  names someone who is not a real user, WordPress leaves the `author` query var
+  falsy (observed as boolean `false`, not `0`) and drops the constraint, so the
+  query returns every post.
+
+  `Timber::get_user( false )` then behaves differently depending on who is
+  looking. Anonymous gets `NULL`, so 1.7.1 correctly fell through to the 404.
+  **A logged-in user gets the current user back**, so the same URL rendered
+  "Author Archives: <the viewer's own name>" — a page for a user that does not
+  exist, titled after whoever happened to be viewing it.
+
+  That split is also why the original 500 was easy to miss: testing while logged
+  into wp-admin rendered a normal-looking archive, and only anonymous traffic —
+  scanners walking author slugs — ever saw the fatal.
+
+  The id is now cast to int and required to be `> 0` before Timber is called, so
+  a falsy query var cannot reach the lookup and every viewer gets the same 404.
+
 ## [1.7.1] - 2026-08-26
 
 ### Fixed

@@ -13,24 +13,31 @@ $context          = Timber::context();
 $context['posts'] = Timber::get_posts();
 
 /*
- * Guard the user lookup. Timber::get_user() returns false for an id that does
- * not resolve, and calling ->name() on that is a fatal — which is what this
- * template used to do.
+ * Resolve the author, and never hand Timber a falsy id.
  *
- * It is reachable without a bad URL. WordPress sets the `author` query var to
- * 0 when an /author/<slug>/ request names someone who does not exist, so any
- * scanner walking author slugs turned every miss into a 500. Verified on
- * vincentragosta.io 2026-08-26: /author/<real>/ rendered, /author/<anything
- * else>/ was an uncaught Error out of line 17.
+ * Two bugs lived here. When an /author/<slug>/ request names someone who is
+ * not a real user, WordPress leaves the `author` query var falsy (observed as
+ * boolean false, not 0) and silently drops the constraint, so the query
+ * returns every post.
  *
- * A 500 is worse than the 404 it should have been in two ways: it is an
- * information leak (a distinguishable response for a name that does not
- * exist), and it burns PHP workers on traffic that should be cheap.
+ *   1. Timber::get_user( false ) returns NULL for an anonymous visitor, and
+ *      the old code called ->name() on it — an uncaught Error, HTTP 500.
+ *      Anonymous is the case that matters: it is what a scanner walking author
+ *      slugs hits, so every miss burned a PHP worker and returned a response
+ *      distinguishable from a real 404.
+ *
+ *   2. Timber::get_user( false ) returns the CURRENT USER when someone is
+ *      logged in. So the same URL that fatalled for the public rendered
+ *      "Author Archives: <your own name>" for an administrator — a page for a
+ *      user that does not exist, titled after whoever happened to be viewing.
+ *      This is also why the fatal was easy to miss while testing logged in.
+ *
+ * Casting to int and requiring > 0 kills both: a falsy query var can no longer
+ * reach Timber, so the lookup either finds a real user or we fall through to
+ * the 404 below, identically for every viewer.
  */
-$author = false;
-if ( isset( $wp_query->query_vars['author'] ) ) {
-	$author = Timber::get_user( $wp_query->query_vars['author'] );
-}
+$author_id = (int) ( $wp_query->query_vars['author'] ?? 0 );
+$author    = $author_id > 0 ? Timber::get_user( $author_id ) : false;
 
 if ( $author ) {
 	$context['author'] = $author;
