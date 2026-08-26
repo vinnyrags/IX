@@ -5,6 +5,34 @@ follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions are
 derived from annotated git tags (no `version` field in `composer.json`).
 Entries predating this file (≤ v1.2.0) are tracked only as tags.
 
+## [1.7.1] - 2026-08-26
+
+### Fixed
+
+- **`author.php` fatalled on any author that does not exist, returning 500
+  instead of 404.** `Timber::get_user()` returns false for an id that does not
+  resolve, and the template called `->name()` on it unconditionally.
+
+  This did not need a malformed URL to reach. WordPress sets the `author` query
+  var to `0` when an `/author/<slug>/` request names someone who is not a real
+  user, so every miss was an uncaught `Error`. Found on vincentragosta.io on
+  2026-08-26: `/author/vragosta/` rendered normally while `/author/anything-else/`
+  was a 500 out of line 17.
+
+  Worth stating why a 500 here is worse than an untidy error page. It is an
+  information leak — a response that is distinguishable from a real 404 tells a
+  scanner which names exist, which is the same enumeration problem
+  `DisableAuthorArchives` was added to close in 1.7.0. It also burns a PHP
+  worker on traffic that should be cheap to refuse.
+
+  The lookup is now guarded, and a miss renders `404.twig` with a real 404
+  status rather than an empty archive.
+
+  **Sites on 1.7.0 defaults were never exposed to this** — `DisableAuthorArchives`
+  intercepts author requests before the template loads. It is reachable only where
+  a site has opted out via `DisableAuthorArchives::class => false`, which is
+  exactly the configuration that predates 1.7.0 and the one this fix protects.
+
 ## [1.7.0] - 2026-08-24
 
 ### Security
