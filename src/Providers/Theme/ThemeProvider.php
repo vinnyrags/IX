@@ -19,6 +19,7 @@ use IX\Providers\Theme\Features\EnableSvgUploads;
 use IX\Providers\Theme\Hooks\AccordionIconEnhancer;
 use IX\Providers\Theme\Hooks\FeaturedImageFocalPoint;
 use IX\Providers\Theme\Hooks\HeadingBlockStyles;
+use IX\Providers\Theme\Hooks\MailIdentity;
 use IX\Providers\Theme\Hooks\TermsQuerySupports;
 use IX\Services\IconServiceFactory;
 use Timber\Attachment;
@@ -51,6 +52,7 @@ class ThemeProvider extends Provider
         FeaturedImageFocalPoint::class,
         HeadingBlockStyles::class,
         TermsQuerySupports::class,
+        MailIdentity::class,
     ];
 
     /**
