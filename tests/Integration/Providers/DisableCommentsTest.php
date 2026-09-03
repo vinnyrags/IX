@@ -146,4 +146,68 @@ class DisableCommentsTest extends BaseTestCase
         $this->assertIsArray($result);
         $this->assertEmpty($result);
     }
+
+    /**
+     * Test that register adds the default status filters.
+     */
+    public function testRegisterAddsDefaultStatusFilters(): void
+    {
+        $this->feature->register();
+
+        $this->assertGreaterThan(
+            0,
+            has_filter('option_default_comment_status', [$this->feature, 'forceClosed'])
+        );
+
+        $this->assertGreaterThan(
+            0,
+            has_filter('option_default_ping_status', [$this->feature, 'forceClosed'])
+        );
+    }
+
+    /**
+     * Test that the stored default comment status reads as closed.
+     */
+    public function testDefaultCommentStatusFilterReturnsClosed(): void
+    {
+        $this->feature->register();
+
+        $this->assertSame('closed', apply_filters('option_default_comment_status', 'open'));
+    }
+
+    /**
+     * Test that the stored default ping status reads as closed.
+     */
+    public function testDefaultPingStatusFilterReturnsClosed(): void
+    {
+        $this->feature->register();
+
+        $this->assertSame('closed', apply_filters('option_default_ping_status', 'open'));
+    }
+
+    /**
+     * The value must be the string 'closed', not a boolean.
+     *
+     * WordPress writes this straight into the post's `comment_status` column on
+     * insert. Returning false would store an empty string, which is not a valid
+     * status and would not read back as closed.
+     */
+    public function testForceClosedReturnsStringNotBoolean(): void
+    {
+        $this->assertSame('closed', $this->feature->forceClosed());
+        $this->assertIsString($this->feature->forceClosed());
+    }
+
+    /**
+     * Without the feature registered, the defaults must be untouched.
+     *
+     * This is what keeps the opt-out (`DisableComments::class => false`) honest:
+     * disabling the feature has to restore stock WordPress behaviour, not leave
+     * a filter behind.
+     */
+    public function testDefaultsAreUntouchedWhenNotRegistered(): void
+    {
+        $this->assertSame('open', apply_filters('option_default_comment_status', 'open'));
+        $this->assertSame('open', apply_filters('option_default_ping_status', 'open'));
+    }
 }
