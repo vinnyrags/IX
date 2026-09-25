@@ -5,6 +5,42 @@ follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions are
 derived from annotated git tags (no `version` field in `composer.json`).
 Entries predating this file (≤ v1.2.0) are tracked only as tags.
 
+## [1.8.0] - 2026-09-25
+
+### Added
+
+- **`ix/content_slider/splide_config` filter — a seam for per-site carousel
+  behaviour.** The Content Slider's attributes cover what every site wants
+  (arrows, autoplay, fade); this covers what one site wants. A theme returns
+  Splide options from the filter, `render.php` serialises them onto a
+  `data-splide` attribute, and `view.js` merges them last — so a filter can
+  override anything the block's own attributes set.
+
+  It exists because the alternative was worse in both directions. Growing an
+  attribute, a `data-*` key and an inspector control for every option any site
+  might want makes the block a config surface; the other option, a child theme
+  replacing the whole `viewScript` to reach Splide, duplicates the init, the
+  base config and the markup contract, and drags a second copy of Splide into
+  the child's bundle. The first site to need it wanted a three-up press
+  carousel with pagination.
+
+  The filter receives `$attributes`, so a theme can vary config per block
+  instance — most usefully off `className`, which carries the `is-style-*` of a
+  registered block style. That keeps the author's control a real one in the
+  Styles panel while the mapping from style to config stays in the theme.
+
+### Changed
+
+- **The Content Slider's skip threshold now scales with `perPage`.** It was a
+  flat "fewer than 2 slides"; it is now "no more slides than are visible at
+  once". Identical at the default `perPage: 1`, and it stops a three-up
+  carousel holding exactly three slides from mounting with live arrows that go
+  nowhere.
+
+Unfiltered sliders emit no `data-splide` at all and their wrapper markup is
+byte-identical to 1.7.2, so this is a no-op for CBA, AVFTB and Matchbook until
+each chooses to use it.
+
 ## [1.7.2] - 2026-08-26
 
 ### Fixed
