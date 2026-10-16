@@ -5,6 +5,8 @@
  * @var array $attributes Block attributes.
  */
 
+declare(strict_types=1);
+
 use IX\Providers\Blog\BlogRepository;
 use IX\Theme;
 use Timber\Timber;

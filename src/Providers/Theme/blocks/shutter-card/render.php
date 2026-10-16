@@ -3,6 +3,8 @@
  * Server-side rendering for the Shutter Card block.
  */
 
+declare(strict_types=1);
+
 use Timber\Timber;
 
 $context = Timber::context();

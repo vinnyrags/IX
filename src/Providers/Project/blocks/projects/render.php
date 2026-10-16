@@ -3,6 +3,8 @@
  * Server-side rendering for the Projects block.
  */
 
+declare(strict_types=1);
+
 use IX\Providers\Project\ProjectRepository;
 use IX\Theme;
 use Timber\Timber;

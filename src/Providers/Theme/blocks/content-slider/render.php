@@ -3,6 +3,8 @@
  * Server-side rendering for the Content Slider block.
  */
 
+declare(strict_types=1);
+
 use Timber\Timber;
 
 $inner_blocks = $block?->inner_blocks ?? [];
