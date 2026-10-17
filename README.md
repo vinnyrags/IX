@@ -109,6 +109,21 @@ Tests mirror the source tree. See `tests/Unit/` and `tests/Integration/`.
 - Blocks or patterns specific to a site (IX has generic ones only)
 - E-commerce, Discord bot, or third-party integrations
 
+### Preset token contract
+
+IX's own SCSS reads a few `theme.json` preset slugs but **defines none of them** —
+the child theme owns the scale. Every read carries a fallback equal to what the
+browser renders when the slug is undefined (`0` for spacing, `inherit` for font
+size), so a child that skips a slug gets no spacing/size from IX rather than
+broken CSS. Define these in the child's `theme.json` to style IX's components:
+
+| Slug | Read by |
+|---|---|
+| `spacing--20`, `--40`, `--50` | content-slider, shutter-cards, shutter-card |
+| `spacing--20`, `--30`, `--40` | WpFormsBaseStyles, WpFormsFloatingLabels |
+| `font-size--10`, `--20` | shutter-card, WpFormsFloatingLabels |
+| `color--base` | content-slider arrows (no fallback — set `--content-slider-arrow-color` instead) |
+
 ## Context
 
 IX is the parent theme for [vincentragosta.io](https://github.com/vinnyrags/vincentragosta.io), the personal website of Vincent Ragosta. It was extracted into this standalone Composer package so child themes across projects can share the same foundation.

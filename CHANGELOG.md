@@ -5,6 +5,37 @@ follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions are
 derived from annotated git tags (no `version` field in `composer.json`).
 Entries predating this file (≤ v1.2.0) are tracked only as tags.
 
+## [Unreleased]
+
+IX's rule is that it makes no choices a child theme has to undo. This release
+removes the places where it did. See UPGRADING.md (1.8.x → 1.9.0).
+
+### Changed
+
+- **`AccordionIconEnhancer` is an opt-in Feature** (was an always-on Hook, so no
+  site could turn it off). It injects a chevron but IX ships no CSS for it, so
+  every site without its own accordion styles got an unstyled, unrotated icon.
+  Moved to `IX\Providers\Theme\Features`. **Requires an opt-in** on sites that
+  style it.
+- **`wp-block-styles` is the `CoreBlockStyles` Feature**, default-on. Core's
+  bundled block theme CSS is a design choice; children can now opt out with
+  `=> false` instead of `remove_theme_support()` at a later priority.
+- **`SchemaBuilderService` author defaults to the site title**, not
+  `'Vincent Ragosta'`.
+
+### Fixed
+
+- **Preset reads in IX SCSS carry fallbacks.** content-slider, shutter-cards,
+  shutter-card and the WPForms features read `spacing--*` / `font-size--*`
+  presets IX never defines. Fallbacks match what an undefined slug already
+  rendered, so nothing changes visually; the dependency is now explicit and
+  documented in the README's preset token contract.
+
+### Removed
+
+- `utilities/_text.scss` — a heading-underline treatment that was never imported
+  by `index.scss`, so it never shipped.
+
 ## [1.8.0] - 2026-09-25
 
 ### Added

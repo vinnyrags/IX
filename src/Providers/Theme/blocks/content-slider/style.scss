@@ -41,10 +41,10 @@
     .splide__arrows {
         display: flex;
         justify-content: flex-start;
-        gap: var(--wp--preset--spacing--20);
+        gap: var(--wp--preset--spacing--20, 0);
         order: 2;
         position: static;
-        margin-top: var(--wp--style--block-gap, var(--wp--preset--spacing--40));
+        margin-top: var(--wp--style--block-gap, var(--wp--preset--spacing--40, 0));
     }
 
     .splide__track {

@@ -5,7 +5,7 @@
 
   .block-editor-block-list__layout {
     display: grid;
-    gap: var(--wp--preset--spacing--20);
+    gap: var(--wp--preset--spacing--20, 0);
     grid-template-columns: 1fr;
 
     @include container(shutter-cards, lg) {

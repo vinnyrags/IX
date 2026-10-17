@@ -10,7 +10,7 @@
 
 // Field spacing
 .wpforms-field {
-  margin-block-end: var(--wp--preset--spacing--30);
+  margin-block-end: var(--wp--preset--spacing--30, 0);
 }
 
 // Full width inputs (override WPForms .wpforms-field-medium)
@@ -26,7 +26,7 @@
 
 // Submit container spacing
 .wpforms-submit-container {
-  margin-block-start: var(--wp--preset--spacing--40);
+  margin-block-start: var(--wp--preset--spacing--40, 0);
 }
 
 // Honeypot exclusion

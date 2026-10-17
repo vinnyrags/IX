@@ -36,9 +36,14 @@ class SchemaBuilderService
     private string $siteUrl;
     private string $authorName;
 
-    public function __construct(string $authorName = 'Vincent Ragosta', ?string $siteUrl = null)
+    /**
+     * @param string|null $authorName Name for the Person/Organization fragments. Defaults to the
+     *                                site title — IX has no business knowing who runs the site.
+     * @param string|null $siteUrl    Defaults to home_url('/').
+     */
+    public function __construct(?string $authorName = null, ?string $siteUrl = null)
     {
-        $this->authorName = $authorName;
+        $this->authorName = $authorName ?? get_bloginfo('name');
         $this->siteUrl = $siteUrl ?? home_url('/');
     }
 

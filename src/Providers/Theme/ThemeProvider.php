@@ -9,6 +9,7 @@ use IX\Models\Image;
 use IX\Models\Post;
 use IX\Providers\Provider;
 use IX\Providers\Theme\Features\ContentPartial\ContentPartial;
+use IX\Providers\Theme\Features\CoreBlockStyles;
 use IX\Providers\Theme\Features\DisableAuthorArchives;
 use IX\Providers\Theme\Features\DisableBlocks;
 use IX\Providers\Theme\Features\DisableComments;
@@ -16,7 +17,6 @@ use IX\Providers\Theme\Features\DisableDefaultPatterns;
 use IX\Providers\Theme\Features\DisablePluginUpdates;
 use IX\Providers\Theme\Features\DisablePosts;
 use IX\Providers\Theme\Features\EnableSvgUploads;
-use IX\Providers\Theme\Hooks\AccordionIconEnhancer;
 use IX\Providers\Theme\Hooks\FeaturedImageFocalPoint;
 use IX\Providers\Theme\Hooks\HeadingBlockStyles;
 use IX\Providers\Theme\Hooks\MailIdentity;
@@ -48,7 +48,6 @@ class ThemeProvider extends Provider
      * @var array<class-string>
      */
     protected array $hooks = [
-        AccordionIconEnhancer::class,
         FeaturedImageFocalPoint::class,
         HeadingBlockStyles::class,
         TermsQuerySupports::class,
@@ -73,6 +72,7 @@ class ThemeProvider extends Provider
      */
     protected array $features = [
         ContentPartial::class,
+        CoreBlockStyles::class,
         DisableAuthorArchives::class,
         DisableBlocks::class,
         DisableComments::class,
@@ -152,7 +152,6 @@ class ThemeProvider extends Provider
             'script',
         ]);
         add_theme_support('editor-styles');
-        add_theme_support('wp-block-styles');
         add_theme_support('layout');
         add_theme_support('custom-spacing');
         add_theme_support('align-wide');
