@@ -5,7 +5,7 @@ follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions are
 derived from annotated git tags (no `version` field in `composer.json`).
 Entries predating this file (≤ v1.2.0) are tracked only as tags.
 
-## [Unreleased]
+## [1.9.0] - 2026-10-18
 
 IX's rule is that it makes no choices a child theme has to undo. This release
 removes the places where it did. See UPGRADING.md (1.8.x → 1.9.0).
