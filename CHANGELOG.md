@@ -5,6 +5,21 @@ follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions are
 derived from annotated git tags (no `version` field in `composer.json`).
 Entries predating this file (≤ v1.2.0) are tracked only as tags.
 
+## [1.9.1] - 2026-10-18
+
+### Security
+
+- **`enshrined/svg-sanitize` ^0.22 → ^1.0.** Every version through 0.22.0 is
+  covered by three medium advisories — CVE-2026-107380 (stored XSS via DTD
+  entities colliding with HTML5 named character references), CVE-2026-107379
+  (DoS via a DTD attribute declaration) and CVE-2026-107381 (mixed-case
+  `xlink:HrEf` skipping the `<use>` nesting-DoS check) — and `EnableSvgUploads`
+  runs every uploaded SVG through it.
+  The API IX uses is unchanged. One behaviour change: an SVG that references a
+  custom DTD entity is now rejected — the upload fails with IX's existing
+  "invalid or potentially harmful content" error — instead of being cleaned.
+  Ordinary Illustrator/Inkscape exports with a `PUBLIC` doctype still upload.
+
 ## [1.9.0] - 2026-10-18
 
 IX's rule is that it makes no choices a child theme has to undo. This release

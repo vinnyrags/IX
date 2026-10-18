@@ -6,7 +6,7 @@
   "require": {
     "php": ">=8.3",
     "timber/timber": "2.x-dev",
-    "enshrined/svg-sanitize": "^0.22.0"
+    "enshrined/svg-sanitize": "^1.0"
   },
   "require-dev": {
     "automattic/wordbless": "^0.4.2"

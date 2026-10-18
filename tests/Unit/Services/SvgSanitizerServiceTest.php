@@ -116,4 +116,42 @@ class SvgSanitizerServiceTest extends TestCase
         // Comments should be removed
         $this->assertStringNotContainsString('<!--', $clean);
     }
+
+    /**
+     * Test that a custom DTD entity is rejected rather than inlined (svg-sanitize >= 1.0).
+     */
+    public function testSanitizeRejectsCustomDtdEntities(): void
+    {
+        $svg = '<?xml version="1.0"?><!DOCTYPE svg [<!ENTITY Tab "#">]>'
+            . '<svg xmlns="http://www.w3.org/2000/svg"><text>&Tab;</text></svg>';
+
+        $this->assertFalse($this->service->sanitize($svg));
+    }
+
+    /**
+     * Test that a typical editor export with a PUBLIC doctype still sanitizes.
+     */
+    public function testSanitizeAcceptsPublicDoctype(): void
+    {
+        $svg = '<?xml version="1.0"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" '
+            . '"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">'
+            . '<svg xmlns="http://www.w3.org/2000/svg"><rect width="10" height="10"/></svg>';
+        $clean = $this->service->sanitize($svg);
+
+        $this->assertIsString($clean);
+        $this->assertStringContainsString('rect', $clean);
+    }
+
+    /**
+     * Test that a mixed-case remote href is stripped.
+     */
+    public function testSanitizeStripsMixedCaseRemoteHref(): void
+    {
+        $svg = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">'
+            . '<use xlink:HrEf="https://evil.example/x.svg#a"/><rect width="10" height="10"/></svg>';
+        $clean = $this->service->sanitize($svg);
+
+        $this->assertIsString($clean);
+        $this->assertStringNotContainsString('evil.example', $clean);
+    }
 }
