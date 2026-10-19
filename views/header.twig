@@ -1,14 +1,28 @@
-<header class="site-header">
-    <div class="site-header__container">
-        <p class="site-header__logo">
-            <a href="{{ site.url }}" rel="home">{{ site.name }}</a>
-        </p>
-        <nav class="site-header__nav" aria-label="Primary navigation">
-            {{ function('wp_nav_menu', {
-                theme_location: 'primary',
-                container: false,
-                fallback_cb: false
-            }) }}
-        </nav>
-    </div>
-</header>
+{#
+  Site header. Renders the `header` content partial when one resolves
+  (ContentPartial, on by default), and IX's plain title + primary menu when
+  none exists yet. A page whose header mode is Disabled renders nothing.
+
+  The <header> landmark stays in the template, not the partial, so deleting a
+  block in the editor can never remove it.
+#}
+{% if not header_partial_disabled %}
+    <header class="site-header">
+        <div class="site-header__container">
+            {% if header_partial %}
+                {{ header_partial.content|raw }}
+            {% else %}
+                <p class="site-header__logo">
+                    <a href="{{ site.url }}" rel="home">{{ site.name }}</a>
+                </p>
+                <nav class="site-header__nav" aria-label="Primary navigation">
+                    {{ function('wp_nav_menu', {
+                        theme_location: 'primary',
+                        container: false,
+                        fallback_cb: false
+                    }) }}
+                </nav>
+            {% endif %}
+        </div>
+    </header>
+{% endif %}

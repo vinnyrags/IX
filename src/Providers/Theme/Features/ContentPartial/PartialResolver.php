@@ -21,7 +21,7 @@ class PartialResolver
     public static function resolveForType(string $type, ?int $pageId = null): ?WP_Post
     {
         if ($pageId !== null && $pageId > 0) {
-            $mode = (string) (get_field("{$type}_mode", $pageId) ?: 'default');
+            $mode = self::modeFor($type, $pageId);
 
             if ($mode === 'disabled') {
                 return null;
@@ -38,6 +38,23 @@ class PartialResolver
         }
 
         return self::findDefaultForType($type);
+    }
+
+    /**
+     * Whether the page has switched this partial type off (mode = 'disabled').
+     *
+     * Distinguishes "the editor turned the header off here" from "no partial
+     * exists yet" — both resolve to null, but a template should render nothing
+     * for the first and a fallback for the second.
+     */
+    public static function isDisabled(string $type, ?int $pageId = null): bool
+    {
+        return $pageId !== null && $pageId > 0 && self::modeFor($type, $pageId) === 'disabled';
+    }
+
+    private static function modeFor(string $type, int $pageId): string
+    {
+        return (string) (get_field("{$type}_mode", $pageId) ?: 'default');
     }
 
     private static function findDefaultForType(string $type): ?WP_Post

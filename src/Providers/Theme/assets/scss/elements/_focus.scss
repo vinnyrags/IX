@@ -42,3 +42,33 @@
     outline-color: Highlight;
   }
 }
+
+// Skip link — base.twig renders it with .screen-reader-text, which hides it
+// until focus. Without this reveal a sighted keyboard user tabs onto an
+// invisible link. Colors come from tokens; the defaults are system colors so
+// it is legible on any theme without IX picking a palette.
+//
+// :where() keeps this at (0,2,0) — enough to beat .screen-reader-text, below a
+// child's `.skip-link.screen-reader-text:focus` (0,3,0). IX's theme.css can load
+// after the child's, so equal specificity would let IX override a branded link.
+.skip-link:where(.screen-reader-text):focus {
+  position: fixed;
+  inset-block-start: var(--ix-skip-link-offset, 1rem);
+  inset-inline-start: var(--ix-skip-link-offset, 1rem);
+  z-index: 100000;
+  display: inline-block;
+  width: auto;
+  height: auto;
+  clip: auto;
+  clip-path: none;
+  padding: var(--ix-skip-link-padding, 0.5rem 1rem);
+  background: var(--ix-skip-link-background, Canvas);
+  color: var(--ix-skip-link-color, CanvasText);
+  text-decoration: none;
+}
+
+@include forced-colors {
+  .skip-link:where(.screen-reader-text):focus {
+    border: 2px solid ButtonText;
+  }
+}

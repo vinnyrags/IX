@@ -156,7 +156,18 @@ class ThemeProvider extends Provider
         add_theme_support('custom-spacing');
         add_theme_support('align-wide');
 
+        // IX's header.twig renders this location; registering it here means a
+        // child theme only re-registers it to rename it.
+        register_nav_menus([
+            'primary' => __('Primary', 'ix'),
+        ]);
+
+        // For a child theme, core resolves each path against the parent AND the
+        // child, de-duplicated, so this loads both compiled stylesheets into the
+        // editor. Children that still add 'dist/css/theme.css' themselves are
+        // harmless no-ops.
         add_editor_style('style.css');
+        add_editor_style('dist/css/theme.css');
     }
 
     /**

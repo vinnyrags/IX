@@ -1,3 +1,14 @@
-<div class="site-footer">
-    <p>&copy; {{ "now"|date('Y') }} {{ site.name }}</p>
-</div>
+{#
+  Site footer. Same arrangement as header.twig: the `footer` content partial
+  when one resolves, a copyright line when none exists, nothing when the page
+  disables it. The <footer> landmark stays in the template.
+#}
+{% if not footer_partial_disabled %}
+    <footer class="site-footer">
+        {% if footer_partial %}
+            {{ footer_partial.content|raw }}
+        {% else %}
+            <p>&copy; {{ "now"|date('Y') }} {{ site.name }}</p>
+        {% endif %}
+    </footer>
+{% endif %}

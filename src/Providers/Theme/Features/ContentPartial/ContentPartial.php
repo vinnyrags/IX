@@ -15,10 +15,11 @@ use WP_Post;
  * `partial-type` taxonomy, one flagged `is_default` per type), and each page can
  * override which partial renders (default / custom / disabled) via the "Header &
  * Footer" field group. The resolved partials are injected into the Timber context
- * as `header_partial` / `footer_partial`, which the theme's `views/header.twig` and
- * `views/footer.twig` render — so **the theme still owns the header/footer markup**;
- * this Feature only supplies the data. A theme that builds its chrome directly in
- * those templates simply ignores the context vars.
+ * as `header_partial` / `footer_partial` (plus `*_partial_disabled`). IX's own
+ * `views/header.twig` and `views/footer.twig` render them inside the landmark,
+ * falling back to plain markup when no partial exists; this Feature only supplies
+ * the data. A child theme that builds its chrome directly in its own templates
+ * simply ignores the context vars.
  *
  * Registered by default in {@see \IX\Providers\Theme\ThemeProvider::$features}; a
  * consumer that builds its header/footer purely in-theme (no CPT) opts out with
@@ -196,6 +197,9 @@ class ContentPartial implements Feature
      * Inject the resolved header/footer partials into the Timber context so the
      * theme's header.twig / footer.twig can render them.
      *
+     * `{type}_partial_disabled` is true when the page switched that type off, so a
+     * template can render nothing there and a fallback when no partial exists.
+     *
      * @param array<string, mixed> $context
      * @return array<string, mixed>
      */
@@ -211,6 +215,7 @@ class ContentPartial implements Feature
                 'title' => $partial->post_title,
                 'content' => apply_filters('the_content', $partial->post_content),
             ] : null;
+            $context["{$type}_partial_disabled"] = PartialResolver::isDisabled($type, $pageId);
         }
 
         return $context;

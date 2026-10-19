@@ -5,6 +5,39 @@ follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions are
 derived from annotated git tags (no `version` field in `composer.json`).
 Entries predating this file (≤ v1.2.0) are tracked only as tags.
 
+## [1.10.0] - 2026-10-18
+
+IX's own templates now consume the ContentPartial data it ships. Until now
+every IX child theme overrode `header.twig`/`footer.twig` just to do that, and
+re-enabled the blocks a CMS-built header needs. Nothing here changes a site
+whose child theme already overrides those templates.
+
+### Added
+
+- **`header.twig` / `footer.twig` render the content partials.** The resolved
+  partial renders inside a `<header>` / `<footer>` landmark; with no partial
+  they fall back to the previous markup; a page whose header/footer mode is
+  Disabled renders nothing. New context keys `header_partial_disabled` /
+  `footer_partial_disabled` (and `PartialResolver::isDisabled()`) make that last
+  case distinguishable from "no partial exists yet".
+- **Skip link is revealed on focus.** `base.twig` always rendered it, but only
+  ever visually hidden — invisible to sighted keyboard users on any site without
+  its own reveal. Styled through `--ix-skip-link-{background,color,padding,offset}`
+  with system-color defaults, at specificity a child's own rule always beats.
+- **`primary` menu location registered.** IX's header uses it; children no longer
+  have to register it themselves.
+- **The child's `dist/css/theme.css` is an editor style.** Core resolves it
+  against parent and child and de-duplicates, so children that add it
+  themselves are unaffected.
+
+### Changed
+
+- **`DisableBlocks` no longer disables** `core/navigation`, `navigation-link`,
+  `navigation-submenu`, `site-logo`, `site-title`, `site-tagline`, `search`,
+  `quote` or `pullquote` — the header blocks ContentPartial needs, and the blocks
+  most child themes were re-enabling. Editor-only: these appear in the inserter.
+- **IX's footer fallback is a `<footer>` landmark**, not a `<div>`. Same class.
+
 ## [1.9.1] - 2026-10-18
 
 ### Security

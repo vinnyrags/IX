@@ -36,15 +36,10 @@ class DisableBlocks implements Feature
      * @var array<string>
      */
     protected array $defaultDisabledBlocks = [
-        // Template/Site blocks
+        // Template/Site blocks. Navigation, site logo/title/tagline and search
+        // stay available: ContentPartial (on by default) builds headers from them.
         'core/template-part',
         'core/post-content',
-        'core/navigation',
-        'core/navigation-link',
-        'core/navigation-submenu',
-        'core/site-logo',
-        'core/site-title',
-        'core/site-tagline',
 
         // Query/Loop blocks
         'core/query',
@@ -95,7 +90,6 @@ class DisableBlocks implements Feature
         'core/page-list',
         'core/page-list-item',
         'core/rss',
-        'core/search',
         'core/tag-cloud',
 
         // Layout blocks
@@ -107,8 +101,6 @@ class DisableBlocks implements Feature
         'core/media-text',
         'core/verse',
         'core/details',
-        'core/quote',
-        'core/pullquote',
         'core/freeform',
     ];
 
