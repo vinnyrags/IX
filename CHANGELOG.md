@@ -5,6 +5,16 @@ follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions are
 derived from annotated git tags (no `version` field in `composer.json`).
 Entries predating this file (≤ v1.2.0) are tracked only as tags.
 
+## [1.10.1] - 2026-10-18
+
+### Removed
+
+- **The skip-link reveal added in 1.10.0.** It was built on a wrong premise:
+  the link was never invisible. Core's `wp-block-library` inline CSS already
+  reveals `.screen-reader-text:focus` on every page, so IX's rule only replaced
+  core's styling with its own — an opinion, not a fix. Child themes that brand
+  the skip link keep doing so with their own `.skip-link.screen-reader-text:focus`.
+
 ## [1.10.0] - 2026-10-18
 
 IX's own templates now consume the ContentPartial data it ships. Until now
@@ -20,10 +30,7 @@ whose child theme already overrides those templates.
   Disabled renders nothing. New context keys `header_partial_disabled` /
   `footer_partial_disabled` (and `PartialResolver::isDisabled()`) make that last
   case distinguishable from "no partial exists yet".
-- **Skip link is revealed on focus.** `base.twig` always rendered it, but only
-  ever visually hidden — invisible to sighted keyboard users on any site without
-  its own reveal. Styled through `--ix-skip-link-{background,color,padding,offset}`
-  with system-color defaults, at specificity a child's own rule always beats.
+- **Skip-link reveal** — removed again in 1.10.1; core already provides one.
 - **`primary` menu location registered.** IX's header uses it; children no longer
   have to register it themselves.
 - **The child's `dist/css/theme.css` is an editor style.** Core resolves it
