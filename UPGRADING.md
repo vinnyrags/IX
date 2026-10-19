@@ -2,6 +2,17 @@
 
 Minor versions are additive and back-compatible unless noted here.
 
+## 1.10.x → 1.11.0 — Shutter Cards removed
+
+No published content on any IX site uses `ix/shutter-cards` / `ix/shutter-card`,
+so this is a minor release. If a site does contain one, the editor shows it as
+an unsupported block and the frontend renders nothing for it; restore the block
+from IX v1.10.1 into that child theme's `blocks/` if it is still wanted. Delete
+any child-theme styles for `.shutter-card` / `.wp-block-ix-shutter-card*`.
+
+Content Slider needs nothing: it still works everywhere, its assets just stop
+loading on pages without one.
+
 ## 1.8.x → 1.9.0 — unopinionated cleanup (one opt-in required for some sites)
 
 **Accordion icon is now opt-in.** `AccordionIconEnhancer` moved from

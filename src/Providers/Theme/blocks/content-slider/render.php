@@ -7,6 +7,13 @@ declare(strict_types=1);
 
 use Timber\Timber;
 
+// Assets load on demand: ThemeProvider registers them, this enqueues them
+// wherever a slider actually renders.
+wp_enqueue_style('ix-content-slider-block');
+if (!is_admin()) {
+    wp_enqueue_script('ix-content-slider-view');
+}
+
 $inner_blocks = $block?->inner_blocks ?? [];
 
 // Render inner blocks to HTML strings.

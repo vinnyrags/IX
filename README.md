@@ -119,9 +119,9 @@ broken CSS. Define these in the child's `theme.json` to style IX's components:
 
 | Slug | Read by |
 |---|---|
-| `spacing--20`, `--40`, `--50` | content-slider, shutter-cards, shutter-card |
+| `spacing--20`, `--40` | content-slider |
 | `spacing--20`, `--30`, `--40` | WpFormsBaseStyles, WpFormsFloatingLabels |
-| `font-size--10`, `--20` | shutter-card, WpFormsFloatingLabels |
+| `font-size--10`, `--20` | WpFormsFloatingLabels |
 | `color--base` | content-slider arrows (no fallback — set `--content-slider-arrow-color` instead) |
 
 ## Context

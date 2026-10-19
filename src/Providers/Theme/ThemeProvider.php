@@ -61,8 +61,6 @@ class ThemeProvider extends Provider
      */
     protected array $blocks = [
         'content-slider',
-        'shutter-cards',
-        'shutter-card',
     ];
 
     /**
@@ -198,8 +196,6 @@ class ThemeProvider extends Provider
     {
         $this->enqueueManifestScript($this->handlePrefix . '-blocks-js', 'blocks/index.js');
         $this->enqueueParentEditorScript('ix-content-slider-block-editor', 'js/content-slider.js');
-        $this->enqueueParentEditorScript('ix-shutter-cards-block-editor', 'js/shutter-cards.js');
-        $this->enqueueParentEditorScript('ix-shutter-card-block-editor', 'js/shutter-card.js');
     }
 
     /**
@@ -209,20 +205,27 @@ class ThemeProvider extends Provider
     {
         $this->enqueueDistStyle($this->handlePrefix . '-blocks-style', 'blocks/style-index.css');
 
-        // Block CSS lives in parent theme dist/
-        $this->enqueueParentDistStyle('ix-content-slider-block', 'css/content-slider.css');
-        $this->enqueueParentDistStyle('ix-shutter-cards-block', 'css/shutter-cards.css');
-        $this->enqueueParentDistStyle('ix-shutter-card-block', 'css/shutter-card.css');
-
-        // Frontend view scripts (enqueued here instead of via each block.json
-        // viewScript so they resolve from parent dist/ when a child theme is
-        // active — the block.json file: path resolves against the child).
+        // Content Slider assets load on demand on the frontend. They are only
+        // registered here; the block's render.php enqueues them wherever it
+        // actually renders (page content, a header/footer partial, a synced
+        // pattern). Enqueueing them up front when the queried post's own
+        // content has the block keeps the CSS in <head> for the common case —
+        // otherwise a slider rendered in post content would get its stylesheet
+        // in the footer. Paths come from the parent dist/ rather than block.json
+        // because block.json `file:` paths resolve against the child theme.
         if (!is_admin()) {
-            $this->enqueueParentDistScript('ix-shutter-cards-view', 'js/shutter-cards-view.js');
-            $this->enqueueParentDistScript('ix-content-slider-view', 'js/content-slider-view.js');
+            $this->registerParentDistStyle('ix-content-slider-block', 'css/content-slider.css');
+            $this->registerParentDistScript('ix-content-slider-view', 'js/content-slider-view.js');
+
+            if ($this->queriedPostHasBlock('ix/content-slider')) {
+                wp_enqueue_style('ix-content-slider-block');
+                wp_enqueue_script('ix-content-slider-view');
+            }
         }
 
         if (is_admin()) {
+            $this->enqueueParentDistStyle('ix-content-slider-block', 'css/content-slider.css');
+
             $this->enqueueDistStyle(
                 $this->handlePrefix . '-blocks-editor-style',
                 'blocks/index.css',
@@ -230,7 +233,6 @@ class ThemeProvider extends Provider
             );
 
             $this->enqueueParentDistStyle('ix-content-slider-block-editor', 'css/content-slider-editor.css');
-            $this->enqueueParentDistStyle('ix-shutter-cards-block-editor', 'css/shutter-cards-editor.css');
 
             // Load parent compiled CSS in the editor so shared styles (form
             // resets, layout, etc.) apply. Uses get_template_directory()
@@ -260,6 +262,38 @@ class ThemeProvider extends Provider
         }));
 
         return $twig;
+    }
+
+    /**
+     * Whether the queried singular post's content contains the given block.
+     */
+    protected function queriedPostHasBlock(string $blockName): bool
+    {
+        return is_singular() && has_block($blockName, get_queried_object());
+    }
+
+    /**
+     * Register (without enqueueing) a stylesheet from the parent theme's dist/ directory.
+     */
+    protected function registerParentDistStyle(string $handle, string $path, array $deps = []): void
+    {
+        $fullPath = get_template_directory() . '/dist/' . $path;
+
+        if (file_exists($fullPath)) {
+            wp_register_style($handle, get_template_directory_uri() . '/dist/' . $path, $deps, filemtime($fullPath));
+        }
+    }
+
+    /**
+     * Register (without enqueueing) a footer script from the parent theme's dist/ directory.
+     */
+    protected function registerParentDistScript(string $handle, string $path, array $deps = []): void
+    {
+        $fullPath = get_template_directory() . '/dist/' . $path;
+
+        if (file_exists($fullPath)) {
+            wp_register_script($handle, get_template_directory_uri() . '/dist/' . $path, $deps, filemtime($fullPath), true);
+        }
     }
 
     /**

@@ -5,6 +5,25 @@ follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions are
 derived from annotated git tags (no `version` field in `composer.json`).
 Entries predating this file (≤ v1.2.0) are tracked only as tags.
 
+## [1.11.0] - 2026-10-18
+
+### Changed
+
+- **Content Slider assets load only where a slider renders.** Its stylesheet and
+  Splide view script used to be enqueued on every frontend page of every IX
+  site, used or not. They are now registered on every request and enqueued by
+  the block's `render.php` wherever it renders — post content, a header/footer
+  partial, a synced pattern — and up front in `<head>` when the queried post's
+  own content contains the block. Handles are unchanged
+  (`ix-content-slider-block`, `ix-content-slider-view`).
+
+### Removed
+
+- **The Shutter Cards blocks** (`ix/shutter-cards`, `ix/shutter-card`). A
+  site-specific interaction design rather than a building block, and unused:
+  no published content on any IX site contains them. Their CSS and JS were
+  still loading on every page of every site. See UPGRADING.md.
+
 ## [1.10.1] - 2026-10-18
 
 ### Removed
