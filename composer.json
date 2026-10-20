@@ -5,7 +5,7 @@
   "license": "MIT",
   "require": {
     "php": ">=8.3",
-    "timber/timber": "2.x-dev",
+    "timber/timber": "^2.5",
     "enshrined/svg-sanitize": "^1.0"
   },
   "require-dev": {
