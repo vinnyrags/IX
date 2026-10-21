@@ -8,3 +8,6 @@ dist/
 # Test cache
 .phpunit.result.cache
 coverage/
+
+/CLAUDE.md
+/RUNBOOK.md
