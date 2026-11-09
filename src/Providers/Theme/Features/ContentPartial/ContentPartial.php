@@ -14,7 +14,8 @@ use WP_Post;
  * Editors author header/footer partials as CPT posts (tagged header/footer via the
  * `partial-type` taxonomy, one flagged `is_default` per type), and each page can
  * override which partial renders (default / custom / disabled) via the "Header &
- * Footer" field group. The resolved partials are injected into the Timber context
+ * Footer" field group, shown on post types that render a page of their own
+ * ({@see supportsOverrides()}). The resolved partials are injected into the Timber context
  * as `header_partial` / `footer_partial` (plus `*_partial_disabled`). IX's own
  * `views/header.twig` and `views/footer.twig` render them inside the landmark,
  * falling back to plain markup when no partial exists; this Feature only supplies
@@ -30,6 +31,9 @@ use WP_Post;
 class ContentPartial implements Feature
 {
     private const DEFAULT_TERMS = ['header' => 'Header', 'footer' => 'Footer'];
+
+    /** The "Header & Footer" field group. */
+    public const OVERRIDES_GROUP = 'group_partial_overrides';
 
     public function register(): void
     {
@@ -47,8 +51,43 @@ class ContentPartial implements Feature
         add_filter('acf/fields/post_object/query/key=field_partial_overrides_header_partial', [$this, 'filterHeaderPartialQuery']);
         add_filter('acf/fields/post_object/query/key=field_partial_overrides_footer_partial', [$this, 'filterFooterPartialQuery']);
 
+        add_filter('acf/location/rule_match/post_type', [$this, 'limitOverridesToViewable'], 10, 4);
         add_filter('acf/settings/load_json', [$this, 'registerAcfLoadPath']);
         add_filter('timber/context', [$this, 'addPartialsToContext']);
+    }
+
+    /**
+     * The "Header & Footer" box only where it does something: post types that render a page of their
+     * own. A private type (form submissions, records an editor never visits) or one that never renders
+     * alone (reusable blocks, menus) has no header or footer to override.
+     *
+     * @param bool                $match
+     * @param array<string,mixed> $rule
+     * @param array<string,mixed> $screen
+     * @param array<string,mixed> $fieldGroup
+     */
+    public function limitOverridesToViewable($match, $rule, $screen, $fieldGroup): bool
+    {
+        if (($fieldGroup['key'] ?? '') !== self::OVERRIDES_GROUP || !$match) {
+            return (bool) $match;
+        }
+
+        return self::supportsOverrides((string) ($screen['post_type'] ?? ''));
+    }
+
+    /**
+     * Whether a post type's posts can pick their own header and footer: a publicly viewable type other
+     * than media attachments and the partials themselves. Sites adjust it with the
+     * `ix/content_partial/supports_overrides` filter (bool, post type).
+     */
+    public static function supportsOverrides(string $postType): bool
+    {
+        $supports = $postType !== ''
+            && !in_array($postType, ['attachment', ContentPartialPost::POST_TYPE], true)
+            && post_type_exists($postType)
+            && is_post_type_viewable($postType);
+
+        return (bool) apply_filters('ix/content_partial/supports_overrides', $supports, $postType);
     }
 
     public function registerPostType(): void
