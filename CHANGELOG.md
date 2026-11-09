@@ -5,6 +5,19 @@ follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions are
 derived from annotated git tags (no `version` field in `composer.json`).
 Entries predating this file (≤ v1.2.0) are tracked only as tags.
 
+## [1.12.0] - 2026-11-08
+
+### Changed
+
+- **The "Header & Footer" box shows only on post types that render a page of their own.**
+  It used to appear on every post type except content partials, including private ones
+  (form submissions, records nobody visits), reusable blocks, menus and ACF's own screens,
+  where picking a header did nothing. It now appears on publicly viewable post types other
+  than media attachments and the partials themselves (`ContentPartial::supportsOverrides()`).
+  A site can change the answer per post type with the `ix/content_partial/supports_overrides`
+  filter (`bool $supports, string $postType`). Values already saved on the hidden types are
+  kept and simply no longer editable.
+
 ## [1.11.0] - 2026-10-18
 
 ### Changed
