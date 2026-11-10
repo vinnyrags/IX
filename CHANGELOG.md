@@ -5,6 +5,18 @@ follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions are
 derived from annotated git tags (no `version` field in `composer.json`).
 Entries predating this file (≤ v1.2.0) are tracked only as tags.
 
+## [1.13.0] - 2026-11-09
+
+### Changed
+
+- **A short page keeps its footer at the bottom of the window.** `body` is a column at least the
+  window's height (minus the admin bar, via core's `--wp-admin--admin-bar--height`) and `.site-main`
+  takes the space left, so the footer no longer floats mid-screen on a 404, an empty search or a
+  short listing. Both rules use `:where()` (zero specificity), so a child theme overrides either with
+  a plain selector. Pages taller than the window are unchanged. One side effect: a top margin on
+  `.site-main`'s first child no longer collapses through `<main>` (it now sits inside it), which
+  moves nothing unless `.site-main` has a background or border of its own.
+
 ## [1.12.0] - 2026-11-08
 
 ### Changed

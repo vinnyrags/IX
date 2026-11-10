@@ -11,6 +11,20 @@ html {
   }
 }
 
+// The page fills at least the window, so a short page keeps its footer at the bottom instead of
+// floating mid-screen. Zero specificity (:where), so a child theme overrides either rule with a
+// plain selector. The admin bar's height (set by core when it shows) comes off, so logged-in pages
+// don't scroll by that much for nothing.
+:where(body) {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100dvh - var(--wp-admin--admin-bar--height, 0px));
+}
+
+:where(.site-main) {
+  flex: 1 0 auto;
+}
+
 // .site-content is the inner layout wrapper for the page main content.
 // .site-main is the outer <main> element (header offset only in child
 // themes). Templates that need different semantics (e.g. project detail's
